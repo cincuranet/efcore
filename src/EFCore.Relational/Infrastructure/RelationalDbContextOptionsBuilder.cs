@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.ComponentModel;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Microsoft.EntityFrameworkCore.Infrastructure;
 
@@ -158,6 +159,18 @@ public abstract class RelationalDbContextOptionsBuilder<TBuilder, TExtension> : 
         Func<ExecutionStrategyDependencies, IExecutionStrategy> getExecutionStrategy)
         => WithOption(
             e => (TExtension)e.WithExecutionStrategyFactory(Check.NotNull(getExecutionStrategy, nameof(getExecutionStrategy))));
+
+    /// <summary>
+    /// XXX
+    /// </summary>
+    public virtual TBuilder UsePrimitiveCollectionsConstants()
+        => WithOption(e => (TExtension)e.WithPrimitiveCollectionsBehavior(PrimitiveCollectionsBehavior.Constants));
+
+    /// <summary>
+    /// XXX
+    /// </summary>
+    public virtual TBuilder UsePrimitiveCollectionsParameters()
+        => WithOption(e => (TExtension)e.WithPrimitiveCollectionsBehavior(PrimitiveCollectionsBehavior.Parameters));
 
     /// <summary>
     ///     Sets an option by cloning the extension used to store the settings. This ensures the builder

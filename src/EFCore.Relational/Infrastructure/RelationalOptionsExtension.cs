@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Text;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Microsoft.EntityFrameworkCore.Infrastructure;
 
@@ -33,10 +34,10 @@ public abstract class RelationalOptionsExtension : IDbContextOptionsExtension
     private QuerySplittingBehavior? _querySplittingBehavior;
     private string? _migrationsAssembly;
     private Assembly? _migrationsAssemblyObject;
-
     private string? _migrationsHistoryTableName;
     private string? _migrationsHistoryTableSchema;
     private Func<ExecutionStrategyDependencies, IExecutionStrategy>? _executionStrategyFactory;
+    private PrimitiveCollectionsBehavior? _primitiveCollectionsBehavior;
 
     /// <summary>
     ///     Creates a new set of options with everything set to default values.
@@ -63,6 +64,7 @@ public abstract class RelationalOptionsExtension : IDbContextOptionsExtension
         _migrationsHistoryTableName = copyFrom._migrationsHistoryTableName;
         _migrationsHistoryTableSchema = copyFrom._migrationsHistoryTableSchema;
         _executionStrategyFactory = copyFrom._executionStrategyFactory;
+        _primitiveCollectionsBehavior = copyFrom._primitiveCollectionsBehavior;
     }
 
     /// <summary>
@@ -382,6 +384,25 @@ public abstract class RelationalOptionsExtension : IDbContextOptionsExtension
     }
 
     /// <summary>
+    /// XXX
+    /// </summary>
+    public virtual PrimitiveCollectionsBehavior? PrimitiveCollectionsBehavior
+        => _primitiveCollectionsBehavior;
+
+    /// <summary>
+    /// XXX
+    /// </summary>
+    /// <param name="primitiveCollectionsBehavior">The option to change.</param>
+    public virtual RelationalOptionsExtension WithPrimitiveCollectionsBehavior(PrimitiveCollectionsBehavior primitiveCollectionsBehavior)
+    {
+        var clone = Clone();
+
+        clone._primitiveCollectionsBehavior = primitiveCollectionsBehavior;
+
+        return clone;
+    }
+
+    /// <summary>
     ///     Finds an existing <see cref="RelationalOptionsExtension" /> registered on the given options
     ///     or throws if none has been registered. This is typically used to find some relational
     ///     configuration when it is known that a relational provider is being used.
@@ -538,6 +559,11 @@ public abstract class RelationalOptionsExtension : IDbContextOptionsExtension
                         }
 
                         builder.Append(Extension._migrationsHistoryTableName ?? HistoryRepository.DefaultTableName).Append(' ');
+                    }
+
+                    if (Extension._primitiveCollectionsBehavior != null)
+                    {
+                        builder.Append("PrimitiveCollectionsBehavior=").Append(Extension._primitiveCollectionsBehavior).Append(' ');
                     }
 
                     _logFragment = builder.ToString();
