@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Query.Internal;
@@ -293,6 +294,8 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
             _sqlTranslator.Visit(parameterQueryRootExpression.ParameterExpression) as SqlParameterExpression;
 
         Check.DebugAssert(sqlParameterExpression is not null, "sqlParameterExpression is not null");
+
+        var primitiveCollectionsBehavior = RelationalOptionsExtension.Extract(QueryCompilationContext.ContextOptions).PrimitiveCollectionsBehavior;
 
         var tableAlias = _sqlAliasManager.GenerateTableAlias(sqlParameterExpression.Name.TrimStart('_'));
         if (QueryCompilationContext.ParametersToConstantize.Contains(sqlParameterExpression.Name))

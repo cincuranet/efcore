@@ -11,6 +11,13 @@ using static Expression;
 
 public class NonSharedPrimitiveCollectionsQuerySqlServerTest : NonSharedPrimitiveCollectionsQueryRelationalTestBase
 {
+    protected override DbContextOptionsBuilder SetPrimitiveCollectionsConstants(DbContextOptionsBuilder optionsBuilder)
+    {
+        new SqlServerDbContextOptionsBuilder(optionsBuilder).UsePrimitiveCollectionsConstants();
+
+        return optionsBuilder;
+    }
+
     #region Support for specific element types
 
     public override async Task Array_of_string()
@@ -771,6 +778,17 @@ WHERE JSON_VALUE([t].[Owned], '$.Strings[1]') = N'bar'
     public override async Task Project_collection_from_entity_type_with_owned()
     {
         await base.Project_collection_from_entity_type_with_owned();
+
+        AssertSql(
+            """
+SELECT [t].[Ints]
+FROM [TestEntityWithOwned] AS [t]
+""");
+    }
+
+    public override async Task Parameter_collection_Count()
+    {
+        await base.Parameter_collection_Count();
 
         AssertSql(
             """
