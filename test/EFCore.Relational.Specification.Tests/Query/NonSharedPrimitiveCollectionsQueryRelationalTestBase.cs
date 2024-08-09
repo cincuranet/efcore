@@ -93,7 +93,8 @@ public abstract class NonSharedPrimitiveCollectionsQueryRelationalTestBase : Non
 
         await using var context = contextFactory.CreateContext();
 
-        var result = await context.Set<TestEntity>().Where(c => new[] { 2, 999 }.Count(i => i > c.Id) == 1).Select(x => x.Id).ToListAsync();
+        // temporary EF.Parameter
+        var result = await context.Set<TestEntity>().Where(c => EF.Parameter(new[] { 2, 999 }).Count(i => i > c.Id) == 1).Select(x => x.Id).ToListAsync();
         Assert.Equivalent(new[] { 100 }, result);
     }
 
@@ -113,7 +114,8 @@ public abstract class NonSharedPrimitiveCollectionsQueryRelationalTestBase : Non
 
         await using var context = contextFactory.CreateContext();
 
-        var result = await context.Set<TestEntity>().Where(c => new[] { 2, 999 }.Contains(c.Id)).Select(x => x.Id).ToListAsync();
+        // temporary EF.Parameter
+        var result = await context.Set<TestEntity>().Where(c => EF.Parameter(new[] { 2, 999 }).Contains(c.Id)).Select(x => x.Id).ToListAsync();
         Assert.Equivalent(new[] { 2 }, result);
     }
 
