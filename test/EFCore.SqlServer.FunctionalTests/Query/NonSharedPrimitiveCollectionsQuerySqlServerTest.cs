@@ -792,9 +792,9 @@ FROM [TestEntityWithOwned] AS [t]
 """);
     }
 
-    public override async Task Parameter_collection_Count_with_column_predicate_with_Constants()
+    public override async Task Parameter_collection_Count_with_column_predicate_with_default_constants()
     {
-        await base.Parameter_collection_Count_with_column_predicate_with_Constants();
+        await base.Parameter_collection_Count_with_column_predicate_with_default_constants();
 
         AssertSql(
             """
@@ -807,44 +807,51 @@ WHERE (
 """);
     }
 
-    public override async Task Parameter_collection_of_ints_Contains_int_with_Constants()
+    public override async Task Parameter_collection_of_ints_Contains_int_with_default_constants()
     {
-        await base.Parameter_collection_of_ints_Contains_int_with_Constants();
+        await base.Parameter_collection_of_ints_Contains_int_with_default_constants();
 
         AssertSql(
             """
 SELECT [t].[Id]
 FROM [TestEntity] AS [t]
-WHERE [t].[Id] IN (1, 2)
+WHERE [t].[Id] IN (2, 999)
 """);
     }
 
-//    public override async Task Inline_collection_Count_with_column_predicate_with_Parameters()
-//    {
-//        await base.Inline_collection_Count_with_column_predicate_with_Parameters();
+    public override async Task Inline_collection_Count_with_column_predicate_with_default_parameters()
+    {
+        await base.Inline_collection_Count_with_column_predicate_with_default_parameters();
 
-//        AssertSql(
-//            """
-//SELECT [t].[Id]
-//FROM [TestEntity] AS [t]
-//WHERE (
-//    SELECT COUNT(*)
-//    FROM (VALUES (2), (999)) AS [i]([Value])
-//    WHERE [i].[Value] > [t].[Id]) = 1
-//""");
-//    }
+        AssertSql(
+            """
+@__aaa_0='[2,999]' (Size = 4000)
 
-//    public override async Task Inline_collection_of_ints_Contains_int_with_Parameters()
-//    {
-//        await base.Inline_collection_of_ints_Contains_int_with_Parameters();
+SELECT [t].[Id]
+FROM [TestEntity] AS [t]
+WHERE (
+    SELECT COUNT(*)
+    FROM OPENJSON(@__aaa_0) WITH ([value] int '$') AS [a]
+    WHERE [a].[value] > [t].[Id]) = 1
+""");
+    }
 
-//        AssertSql(
-//            """
-//SELECT [t].[Id]
-//FROM [TestEntity] AS [t]
-//WHERE [t].[Id] IN (1, 2)
-//""");
-//    }
+    public override async Task Inline_collection_of_ints_Contains_int_with_default_parameters()
+    {
+        await base.Inline_collection_of_ints_Contains_int_with_default_parameters();
+
+        AssertSql(
+            """
+@__aaa_0='[2,999]' (Size = 4000)
+
+SELECT [t].[Id]
+FROM [TestEntity] AS [t]
+WHERE [t].[Id] IN (
+    SELECT [a].[value]
+    FROM OPENJSON(@__aaa_0) WITH ([value] int '$') AS [a]
+)
+""");
+    }
 
     [ConditionalFact]
     public virtual async Task Same_parameter_with_different_type_mappings()
