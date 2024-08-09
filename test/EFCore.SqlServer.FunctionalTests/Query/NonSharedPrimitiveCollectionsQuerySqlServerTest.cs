@@ -825,7 +825,7 @@ WHERE [t].[Id] IN (2, 999)
 
         AssertSql(
             """
-@__ints_0='[2,999]' (Size = 4000)
+@__p_0='[2,999]' (Size = 4000)
 
 SELECT [t].[Id]
 FROM [TestEntity] AS [t]
@@ -842,7 +842,7 @@ WHERE (
 
         AssertSql(
             """
-@__ints_0='[2,999]' (Size = 4000)
+@__p_0='[2,999]' (Size = 4000)
 
 SELECT [t].[Id]
 FROM [TestEntity] AS [t]
