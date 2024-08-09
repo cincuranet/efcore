@@ -17,6 +17,12 @@ public class NonSharedPrimitiveCollectionsQuerySqlServerTest : NonSharedPrimitiv
 
         return optionsBuilder;
     }
+    protected override DbContextOptionsBuilder SetPrimitiveCollectionsParameters(DbContextOptionsBuilder optionsBuilder)
+    {
+        new SqlServerDbContextOptionsBuilder(optionsBuilder).UsePrimitiveCollectionsParameters();
+
+        return optionsBuilder;
+    }
 
     #region Support for specific element types
 
@@ -786,16 +792,59 @@ FROM [TestEntityWithOwned] AS [t]
 """);
     }
 
-    public override async Task Parameter_collection_Count()
+    public override async Task Parameter_collection_Count_with_column_predicate_with_Constants()
     {
-        await base.Parameter_collection_Count();
+        await base.Parameter_collection_Count_with_column_predicate_with_Constants();
 
         AssertSql(
             """
-SELECT [t].[Ints]
-FROM [TestEntityWithOwned] AS [t]
+SELECT [t].[Id]
+FROM [TestEntity] AS [t]
+WHERE (
+    SELECT COUNT(*)
+    FROM (VALUES (2), (999)) AS [i]([Value])
+    WHERE [i].[Value] > [t].[Id]) = 1
 """);
     }
+
+    public override async Task Parameter_collection_of_ints_Contains_int_with_Constants()
+    {
+        await base.Parameter_collection_of_ints_Contains_int_with_Constants();
+
+        AssertSql(
+            """
+SELECT [t].[Id]
+FROM [TestEntity] AS [t]
+WHERE [t].[Id] IN (1, 2)
+""");
+    }
+
+//    public override async Task Inline_collection_Count_with_column_predicate_with_Parameters()
+//    {
+//        await base.Inline_collection_Count_with_column_predicate_with_Parameters();
+
+//        AssertSql(
+//            """
+//SELECT [t].[Id]
+//FROM [TestEntity] AS [t]
+//WHERE (
+//    SELECT COUNT(*)
+//    FROM (VALUES (2), (999)) AS [i]([Value])
+//    WHERE [i].[Value] > [t].[Id]) = 1
+//""");
+//    }
+
+//    public override async Task Inline_collection_of_ints_Contains_int_with_Parameters()
+//    {
+//        await base.Inline_collection_of_ints_Contains_int_with_Parameters();
+
+//        AssertSql(
+//            """
+//SELECT [t].[Id]
+//FROM [TestEntity] AS [t]
+//WHERE [t].[Id] IN (1, 2)
+//""");
+//    }
 
     [ConditionalFact]
     public virtual async Task Same_parameter_with_different_type_mappings()

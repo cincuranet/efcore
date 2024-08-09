@@ -298,7 +298,8 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         var primitiveCollectionsBehavior = RelationalOptionsExtension.Extract(QueryCompilationContext.ContextOptions).PrimitiveCollectionsBehavior;
 
         var tableAlias = _sqlAliasManager.GenerateTableAlias(sqlParameterExpression.Name.TrimStart('_'));
-        if (QueryCompilationContext.ParametersToConstantize.Contains(sqlParameterExpression.Name))
+        if (QueryCompilationContext.ParametersToConstantize.Contains(sqlParameterExpression.Name)
+            || primitiveCollectionsBehavior == PrimitiveCollectionsBehavior.Constants)
         {
             var valuesExpression = new ValuesExpression(
                 tableAlias,

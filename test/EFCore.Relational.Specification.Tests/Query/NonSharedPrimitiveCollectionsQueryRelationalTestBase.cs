@@ -13,6 +13,7 @@ public abstract class NonSharedPrimitiveCollectionsQueryRelationalTestBase : Non
         => AssertTranslationFailed(() => TestArray((byte)1, (byte)2));
 
     protected abstract DbContextOptionsBuilder SetPrimitiveCollectionsConstants(DbContextOptionsBuilder optionsBuilder);
+    protected abstract DbContextOptionsBuilder SetPrimitiveCollectionsParameters(DbContextOptionsBuilder optionsBuilder);
 
     [ConditionalFact]
     public virtual async Task Column_collection_inside_json_owned_entity()
@@ -37,7 +38,7 @@ public abstract class NonSharedPrimitiveCollectionsQueryRelationalTestBase : Non
     }
 
     [ConditionalFact]
-    public virtual async Task Parameter_collection_Count()
+    public virtual async Task Parameter_collection_Count_with_column_predicate_with_Constants()
     {
         var contextFactory = await InitializeAsync<TestContext>(
             onConfiguring: b => SetPrimitiveCollectionsConstants(b),
@@ -52,10 +53,69 @@ public abstract class NonSharedPrimitiveCollectionsQueryRelationalTestBase : Non
         await using var context = contextFactory.CreateContext();
 
         var ids = new[] { 2, 999 };
-
         var result = await context.Set<TestEntity>().Where(c => ids.Count(i => i > c.Id) == 1).Select(x => x.Id).ToListAsync();
-        Assert.Equal(new[] { 100 }, result);
+        Assert.Equivalent(new[] { 100 }, result);
     }
+
+    [ConditionalFact]
+    public virtual async Task Parameter_collection_of_ints_Contains_int_with_Constants()
+    {
+        var contextFactory = await InitializeAsync<TestContext>(
+            onConfiguring: b => SetPrimitiveCollectionsConstants(b),
+            seed: context =>
+            {
+                context.AddRange(
+                    new TestEntity { Id = 1 },
+                    new TestEntity { Id = 2 },
+                    new TestEntity { Id = 100 });
+                return context.SaveChangesAsync();
+            });
+
+        await using var context = contextFactory.CreateContext();
+
+        var ints = new[] { 1, 2 };
+        var result = await context.Set<TestEntity>().Where(c => ints.Contains(c.Id)).Select(x => x.Id).ToListAsync();
+        Assert.Equivalent(new[] { 1, 2 }, result);
+    }
+
+    //[ConditionalFact]
+    //public virtual async Task Inline_collection_Count_with_column_predicate_with_Parameters()
+    //{
+    //    var contextFactory = await InitializeAsync<TestContext>(
+    //        onConfiguring: b => SetPrimitiveCollectionsParameters(b),
+    //        seed: context =>
+    //        {
+    //            context.AddRange(
+    //                new TestEntity { Id = 1 },
+    //                new TestEntity { Id = 100 });
+    //            return context.SaveChangesAsync();
+    //        });
+
+    //    await using var context = contextFactory.CreateContext();
+
+    //    var result = await context.Set<TestEntity>().Where(c => new[] { 2, 999 }.Count(i => i > c.Id) == 1).Select(x => x.Id).ToListAsync();
+    //    Assert.Equivalent(new[] { 100 }, result);
+    //}
+
+    //[ConditionalFact]
+    //public virtual async Task Inline_collection_of_ints_Contains_int_with_Parameters()
+    //{
+    //    var contextFactory = await InitializeAsync<TestContext>(
+    //        onConfiguring: b => SetPrimitiveCollectionsParameters(b),
+    //        seed: context =>
+    //        {
+    //            context.AddRange(
+    //                new TestEntity { Id = 1 },
+    //                new TestEntity { Id = 2 },
+    //                new TestEntity { Id = 100 });
+    //            return context.SaveChangesAsync();
+    //        });
+
+    //    await using var context = contextFactory.CreateContext();
+
+    //    var result = await context.Set<TestEntity>().Where(c => new[] { 1, 2 }.Contains(c.Id)).Select(x => x.Id).ToListAsync();
+    //    Assert.Equivalent(new[] { 1, 2 }, result);
+    //}
 
     protected class TestOwner
     {

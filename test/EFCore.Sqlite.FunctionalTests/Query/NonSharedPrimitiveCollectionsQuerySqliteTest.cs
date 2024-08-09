@@ -7,6 +7,19 @@ namespace Microsoft.EntityFrameworkCore.Query;
 
 public class NonSharedPrimitiveCollectionsQuerySqliteTest : NonSharedPrimitiveCollectionsQueryRelationalTestBase
 {
+    protected override DbContextOptionsBuilder SetPrimitiveCollectionsConstants(DbContextOptionsBuilder optionsBuilder)
+    {
+        new SqliteDbContextOptionsBuilder(optionsBuilder).UsePrimitiveCollectionsConstants();
+
+        return optionsBuilder;
+    }
+    protected override DbContextOptionsBuilder SetPrimitiveCollectionsParameters(DbContextOptionsBuilder optionsBuilder)
+    {
+        new SqliteDbContextOptionsBuilder(optionsBuilder).UsePrimitiveCollectionsParameters();
+
+        return optionsBuilder;
+    }
+
     #region Support for specific element types
 
     public override async Task Array_of_int()
