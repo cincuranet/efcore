@@ -34,12 +34,14 @@ public interface IMigrationCommandExecutor
     /// <param name="migrationCommands">The commands to execute.</param>
     /// <param name="connection">The connection to use.</param>
     /// <param name="executionState">The state of the current migration execution.</param>
-    /// <param name="executeInTransaction">Indicates whether the commands should be executed in a transaction.</param>
+    /// <param name="useExecutionStrategy">
+    ///     Indicates whether the commands should be executed in a transaction using an execution strategy.
+    /// </param>
     void ExecuteNonQuery(
         IReadOnlyList<MigrationCommand> migrationCommands,
         IRelationalConnection connection,
         MigrationExecutionState executionState,
-        bool executeInTransaction);
+        bool useExecutionStrategy);
 
     /// <summary>
     ///     Executes the given commands using the given database connection.
@@ -60,7 +62,9 @@ public interface IMigrationCommandExecutor
     /// <param name="migrationCommands">The commands to execute.</param>
     /// <param name="connection">The connection to use.</param>
     /// <param name="executionState">The state of the current migration execution.</param>
-    /// <param name="executeInTransaction">Indicates whether the commands should be executed in a transaction.</param>
+    /// <param name="useExecutionStrategy">
+    ///     Indicates whether the commands should be executed in a transaction using an execution strategy.
+    /// </param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
     /// <exception cref="OperationCanceledException">If the <see cref="CancellationToken" /> is canceled.</exception>
@@ -68,6 +72,6 @@ public interface IMigrationCommandExecutor
         IReadOnlyList<MigrationCommand> migrationCommands,
         IRelationalConnection connection,
         MigrationExecutionState executionState,
-        bool executeInTransaction,
+        bool useExecutionStrategy,
         CancellationToken cancellationToken = default);
 }

@@ -60,7 +60,7 @@ public class SqlServerHistoryRepository : HistoryRepository
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public override IMigrationsDatabaseLock AcquireDatabaseLock(IDbContextTransaction transaction)
+    public override IMigrationsDatabaseLock AcquireDatabaseLock()
     {
         Dependencies.MigrationsLogger.AcquiringMigrationLock();
 
@@ -94,7 +94,7 @@ public class SqlServerHistoryRepository : HistoryRepository
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public override async Task<IMigrationsDatabaseLock> AcquireDatabaseLockAsync(IDbContextTransaction transaction, CancellationToken cancellationToken = default)
+    public override async Task<IMigrationsDatabaseLock> AcquireDatabaseLockAsync(CancellationToken cancellationToken = default)
     {
         Dependencies.MigrationsLogger.AcquiringMigrationLock();
 
@@ -140,7 +140,8 @@ DECLARE @result int;
 EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
 SELECT @result
 """),
-            CreateRelationalCommandParameters());
+            CreateRelationalCommandParameters(),
+            this);
 
     private RelationalCommandParameterObject CreateRelationalCommandParameters()
         => new(

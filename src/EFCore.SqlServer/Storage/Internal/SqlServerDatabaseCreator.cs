@@ -62,7 +62,7 @@ public class SqlServerDatabaseCreator : RelationalDatabaseCreator
         using (var masterConnection = _connection.CreateMasterConnection())
         {
             Dependencies.MigrationCommandExecutor
-                .ExecuteNonQuery(CreateCreateOperations(), masterConnection);
+                .ExecuteNonQuery(CreateCreateOperations(), masterConnection, new MigrationExecutionState(), useExecutionStrategy: true);
 
             ClearPool();
         }
@@ -82,7 +82,7 @@ public class SqlServerDatabaseCreator : RelationalDatabaseCreator
         await using (masterConnection.ConfigureAwait(false))
         {
             await Dependencies.MigrationCommandExecutor
-                .ExecuteNonQueryAsync(CreateCreateOperations(), masterConnection, cancellationToken)
+                .ExecuteNonQueryAsync(CreateCreateOperations(), masterConnection, new MigrationExecutionState(), useExecutionStrategy: true, cancellationToken)
                 .ConfigureAwait(false);
 
             ClearPool();
@@ -157,8 +157,7 @@ SELECT 1 ELSE SELECT 0");
     {
         var builder = new SqlConnectionStringBuilder(_connection.DbConnection.ConnectionString);
         return Dependencies.MigrationsSqlGenerator.Generate(
-            new[]
-            {
+            [
                 new SqlServerCreateDatabaseOperation
                 {
                     Name = builder.InitialCatalog,
@@ -166,7 +165,7 @@ SELECT 1 ELSE SELECT 0");
                     Collation = Dependencies.CurrentContext.Context.GetService<IDesignTimeModel>()
                         .Model.GetRelationalModel().Collation
                 }
-            });
+            ]);
     }
 
     /// <summary>
@@ -345,7 +344,7 @@ SELECT 1 ELSE SELECT 0");
 
         using var masterConnection = _connection.CreateMasterConnection();
         Dependencies.MigrationCommandExecutor
-            .ExecuteNonQuery(CreateDropCommands(), masterConnection);
+            .ExecuteNonQuery(CreateDropCommands(), masterConnection, new MigrationExecutionState(), useExecutionStrategy: true);
     }
 
     /// <summary>
@@ -361,7 +360,7 @@ SELECT 1 ELSE SELECT 0");
         var masterConnection = _connection.CreateMasterConnection();
         await using var _ = masterConnection.ConfigureAwait(false);
         await Dependencies.MigrationCommandExecutor
-            .ExecuteNonQueryAsync(CreateDropCommands(), masterConnection, cancellationToken)
+            .ExecuteNonQueryAsync(CreateDropCommands(), masterConnection, new MigrationExecutionState(), useExecutionStrategy: true, cancellationToken)
             .ConfigureAwait(false);
     }
 
