@@ -13,6 +13,7 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IncludeSource>false</IncludeSource>
     <IncludeSymbols>true</IncludeSymbols>
+    <IsAotCompatible>false</IsAotCompatible>
     <Description>Entity Framework Core Tools for the NuGet Package Manager Console in Visual Studio.
 
 Enables these commonly used commands:
