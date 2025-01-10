@@ -18,7 +18,7 @@ public readonly struct DbSetProperty
     /// <param name="setter">The setter for DbSet property.</param>
     public DbSetProperty(
         string name,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         IClrPropertySetter? setter)
     {
         Name = name;
@@ -34,7 +34,7 @@ public readonly struct DbSetProperty
     /// <summary>
     ///     Gets the clr type of entity type this DbSet property represent.
     /// </summary>
-    [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)]
+    [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)]
     public Type Type { get; }
 
     /// <summary>

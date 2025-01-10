@@ -3534,7 +3534,7 @@ public class InternalEntityTypeBuilder : InternalTypeBaseBuilder, IConventionEnt
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     public virtual InternalEntityTypeBuilder? GetTargetEntityTypeBuilder(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type targetClrType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type targetClrType,
         MemberInfo navigationInfo,
         ConfigurationSource? configurationSource,
         bool? targetShouldBeOwned = null)

@@ -106,7 +106,7 @@ public interface IConventionModelBuilder : IConventionAnnotatableBuilder
     /// </returns>
     IConventionEntityTypeBuilder? SharedTypeEntity(
         string name,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         bool? shouldBeOwned = false,
         bool fromDataAnnotation = false);
 
@@ -126,7 +126,7 @@ public interface IConventionModelBuilder : IConventionAnnotatableBuilder
     ///     <see langword="null" /> otherwise.
     /// </returns>
     IConventionEntityTypeBuilder? Entity(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         bool? shouldBeOwned = false,
         bool fromDataAnnotation = false);
 
@@ -163,7 +163,7 @@ public interface IConventionModelBuilder : IConventionAnnotatableBuilder
     ///     <see langword="null" /> otherwise.
     /// </returns>
     IConventionEntityTypeBuilder? Entity(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         string definingNavigationName,
         IConventionEntityType definingEntityType,
         bool fromDataAnnotation = false);
@@ -178,7 +178,7 @@ public interface IConventionModelBuilder : IConventionAnnotatableBuilder
     ///     An object that can be used to provide default configuration for the owned entity types.
     /// </returns>
     IConventionOwnedEntityTypeBuilder? Owned(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         bool fromDataAnnotation = false);
 
     /// <summary>
@@ -190,7 +190,7 @@ public interface IConventionModelBuilder : IConventionAnnotatableBuilder
     ///     An <see cref="IConventionModelBuilder" /> to continue configuration if the annotation was set, <see langword="null" /> otherwise.
     /// </returns>
     IConventionModelBuilder? ComplexType(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         bool fromDataAnnotation = false);
 
     /// <summary>
@@ -199,7 +199,7 @@ public interface IConventionModelBuilder : IConventionAnnotatableBuilder
     /// <param name="type">The name of the entity type that might be ignored.</param>
     /// <param name="fromDataAnnotation">Indicates whether the configuration was specified using a data annotation.</param>
     /// <returns><see langword="true" /> if the given entity type name is ignored.</returns>
-    bool IsIgnored([DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type, bool fromDataAnnotation = false);
+    bool IsIgnored([DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type, bool fromDataAnnotation = false);
 
     /// <summary>
     ///     Indicates whether the given entity type name is ignored for the current configuration source.
@@ -219,7 +219,7 @@ public interface IConventionModelBuilder : IConventionAnnotatableBuilder
     ///     if the given entity type was ignored, <see langword="null" /> otherwise.
     /// </returns>
     IConventionModelBuilder? Ignore(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         bool fromDataAnnotation = false);
 
     /// <summary>
@@ -250,7 +250,7 @@ public interface IConventionModelBuilder : IConventionAnnotatableBuilder
     /// <param name="fromDataAnnotation">Indicates whether the configuration was specified using a data annotation.</param>
     /// <returns><see langword="true" /> if the entity type can be added.</returns>
     bool CanHaveEntity(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         bool fromDataAnnotation = false);
 
     /// <summary>
@@ -262,7 +262,7 @@ public interface IConventionModelBuilder : IConventionAnnotatableBuilder
     /// <returns><see langword="true" /> if the entity type can be added.</returns>
     bool CanHaveSharedTypeEntity(
         string name,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type? type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type? type,
         bool fromDataAnnotation = false);
 
     /// <summary>
@@ -289,7 +289,7 @@ public interface IConventionModelBuilder : IConventionAnnotatableBuilder
     /// <param name="type">The entity type to be removed from the model.</param>
     /// <param name="fromDataAnnotation">Indicates whether the configuration was specified using a data annotation.</param>
     /// <returns><see langword="true" /> if the given entity type can be ignored.</returns>
-    bool CanIgnore([DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type, bool fromDataAnnotation = false);
+    bool CanIgnore([DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type, bool fromDataAnnotation = false);
 
     /// <summary>
     ///     Returns a value indicating whether the given entity type name can be ignored from the current configuration source

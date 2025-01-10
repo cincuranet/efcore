@@ -38,7 +38,7 @@ public abstract class TypeBase : ConventionAnnotatable, IMutableTypeBase, IConve
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     protected TypeBase(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         Model model,
         ConfigurationSource configurationSource)
     {
@@ -61,7 +61,7 @@ public abstract class TypeBase : ConventionAnnotatable, IMutableTypeBase, IConve
     /// </summary>
     protected TypeBase(
         string name,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         Model model,
         ConfigurationSource configurationSource)
     {
@@ -80,7 +80,7 @@ public abstract class TypeBase : ConventionAnnotatable, IMutableTypeBase, IConve
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)]
+    [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)]
     public virtual Type ClrType { [DebuggerStepThrough] get; }
 
     /// <summary>
@@ -1440,7 +1440,7 @@ public abstract class TypeBase : ConventionAnnotatable, IMutableTypeBase, IConve
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)]
+    [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)]
     Type IReadOnlyTypeBase.ClrType
     {
         [DebuggerStepThrough]

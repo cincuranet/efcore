@@ -37,7 +37,7 @@ public interface IReadOnlyTypeBase : IReadOnlyAnnotatable
     ///     Shadow types are not currently supported in a model that is used at runtime with a <see cref="DbContext" />.
     ///     Therefore, shadow types will only exist in migration model snapshots, etc.
     /// </remarks>
-    [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)]
+    [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)]
     Type ClrType { get; }
 
     /// <summary>

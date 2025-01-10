@@ -27,12 +27,12 @@ public class ComplexProperty : PropertyBase, IMutableComplexProperty, IConventio
     /// </summary>
     public ComplexProperty(
         string name,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         PropertyInfo? propertyInfo,
         FieldInfo? fieldInfo,
         TypeBase declaringType,
         string? targetTypeName,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type targetType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type targetType,
         bool collection,
         ConfigurationSource configurationSource)
         : base(name, propertyInfo, fieldInfo, configurationSource)

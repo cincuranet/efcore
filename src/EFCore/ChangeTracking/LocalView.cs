@@ -46,7 +46,7 @@ namespace Microsoft.EntityFrameworkCore.ChangeTracking;
 ///     </para>
 /// </remarks>
 /// <typeparam name="TEntity">The type of the entity in the local view.</typeparam>
-public class LocalView<[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TEntity> :
+public class LocalView<[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TEntity> :
     ICollection<TEntity>,
     INotifyCollectionChanged,
     INotifyPropertyChanged,

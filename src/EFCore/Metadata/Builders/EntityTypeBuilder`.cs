@@ -17,7 +17,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Builders;
 ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see> for more information and examples.
 /// </remarks>
 /// <typeparam name="TEntity">The entity type being configured.</typeparam>
-public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TEntity> : EntityTypeBuilder
+public class EntityTypeBuilder<[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TEntity> : EntityTypeBuilder
     where TEntity : class
 {
     /// <summary>
@@ -541,7 +541,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// </param>
     /// <returns>An object that can be used to configure the owned type and the relationship.</returns>
     public virtual OwnedNavigationBuilder<TEntity, TRelatedEntity> OwnsOne
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(string navigationName)
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(string navigationName)
         where TRelatedEntity : class
         => OwnsOneBuilder<TRelatedEntity>(
             new TypeIdentity(typeof(TRelatedEntity), (Model)Metadata.Model),
@@ -571,7 +571,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// </param>
     /// <returns>An object that can be used to configure the owned type and the relationship.</returns>
     public virtual OwnedNavigationBuilder<TEntity, TRelatedEntity> OwnsOne
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             string ownedTypeName,
             string navigationName)
         where TRelatedEntity : class
@@ -603,7 +603,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// </param>
     /// <returns>An object that can be used to configure the owned type and the relationship.</returns>
     public virtual OwnedNavigationBuilder<TEntity, TRelatedEntity> OwnsOne
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             Expression<Func<TEntity, TRelatedEntity?>> navigationExpression)
         where TRelatedEntity : class
         => OwnsOneBuilder<TRelatedEntity>(
@@ -635,7 +635,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// </param>
     /// <returns>An object that can be used to configure the owned type and the relationship.</returns>
     public virtual OwnedNavigationBuilder<TEntity, TRelatedEntity> OwnsOne
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             string ownedTypeName,
             Expression<Func<TEntity, TRelatedEntity?>> navigationExpression)
         where TRelatedEntity : class
@@ -667,7 +667,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// <param name="buildAction">An action that performs configuration of the owned type and the relationship.</param>
     /// <returns>An object that can be used to configure the entity type.</returns>
     public virtual EntityTypeBuilder<TEntity> OwnsOne
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             string navigationName,
             Action<OwnedNavigationBuilder<TEntity, TRelatedEntity>> buildAction)
         where TRelatedEntity : class
@@ -734,7 +734,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// <param name="buildAction">An action that performs configuration of the owned type and the relationship.</param>
     /// <returns>An object that can be used to configure the entity type.</returns>
     public new virtual EntityTypeBuilder<TEntity> OwnsOne(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type ownedType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type ownedType,
         string navigationName,
         Action<OwnedNavigationBuilder> buildAction)
         => (EntityTypeBuilder<TEntity>)base.OwnsOne(ownedType, navigationName, buildAction);
@@ -765,7 +765,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// <returns>An object that can be used to configure the entity type.</returns>
     public new virtual EntityTypeBuilder<TEntity> OwnsOne(
         string ownedTypeName,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type ownedType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type ownedType,
         string navigationName,
         Action<OwnedNavigationBuilder> buildAction)
         => (EntityTypeBuilder<TEntity>)base.OwnsOne(ownedTypeName, ownedType, navigationName, buildAction);
@@ -795,7 +795,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// <param name="buildAction">An action that performs configuration of the owned type and the relationship.</param>
     /// <returns>An object that can be used to configure the entity type.</returns>
     public virtual EntityTypeBuilder<TEntity> OwnsOne
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             string ownedTypeName,
             string navigationName,
             Action<OwnedNavigationBuilder<TEntity, TRelatedEntity>> buildAction)
@@ -836,7 +836,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// <param name="buildAction">An action that performs configuration of the owned type and the relationship.</param>
     /// <returns>An object that can be used to configure the entity type.</returns>
     public virtual EntityTypeBuilder<TEntity> OwnsOne
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             Expression<Func<TEntity, TRelatedEntity?>> navigationExpression,
             Action<OwnedNavigationBuilder<TEntity, TRelatedEntity>> buildAction)
         where TRelatedEntity : class
@@ -877,7 +877,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// <param name="buildAction">An action that performs configuration of the owned type and the relationship.</param>
     /// <returns>An object that can be used to configure the entity type.</returns>
     public virtual EntityTypeBuilder<TEntity> OwnsOne
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             string ownedTypeName,
             Expression<Func<TEntity, TRelatedEntity?>> navigationExpression,
             Action<OwnedNavigationBuilder<TEntity, TRelatedEntity>> buildAction)
@@ -894,7 +894,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     }
 
     private OwnedNavigationBuilder<TEntity, TRelatedEntity> OwnsOneBuilder
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             TypeIdentity ownedType,
             MemberIdentity navigation)
         where TRelatedEntity : class
@@ -933,7 +933,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// </param>
     /// <returns>An object that can be used to configure the owned type and the relationship.</returns>
     public virtual OwnedNavigationBuilder<TEntity, TRelatedEntity> OwnsMany
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             string navigationName)
         where TRelatedEntity : class
         => OwnsManyBuilder<TRelatedEntity>(
@@ -964,7 +964,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// </param>
     /// <returns>An object that can be used to configure the owned type and the relationship.</returns>
     public virtual OwnedNavigationBuilder<TEntity, TRelatedEntity>
-        OwnsMany<[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        OwnsMany<[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             string ownedTypeName,
             string navigationName)
         where TRelatedEntity : class
@@ -996,7 +996,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// </param>
     /// <returns>An object that can be used to configure the owned type and the relationship.</returns>
     public virtual OwnedNavigationBuilder<TEntity, TRelatedEntity> OwnsMany
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             Expression<Func<TEntity, IEnumerable<TRelatedEntity>?>> navigationExpression)
         where TRelatedEntity : class
         => OwnsManyBuilder<TRelatedEntity>(
@@ -1028,7 +1028,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// </param>
     /// <returns>An object that can be used to configure the owned type and the relationship.</returns>
     public virtual OwnedNavigationBuilder<TEntity, TRelatedEntity> OwnsMany
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             string ownedTypeName,
             Expression<Func<TEntity, IEnumerable<TRelatedEntity>?>> navigationExpression)
         where TRelatedEntity : class
@@ -1060,7 +1060,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// <param name="buildAction">An action that performs configuration of the owned type and the relationship.</param>
     /// <returns>An object that can be used to configure the entity type.</returns>
     public virtual EntityTypeBuilder<TEntity> OwnsMany
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             string navigationName,
             Action<OwnedNavigationBuilder<TEntity, TRelatedEntity>> buildAction)
         where TRelatedEntity : class
@@ -1127,7 +1127,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// <param name="buildAction">An action that performs configuration of the owned type and the relationship.</param>
     /// <returns>An object that can be used to configure the entity type.</returns>
     public new virtual EntityTypeBuilder<TEntity> OwnsMany(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type ownedType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type ownedType,
         string navigationName,
         Action<OwnedNavigationBuilder> buildAction)
         => (EntityTypeBuilder<TEntity>)base.OwnsMany(ownedType, navigationName, buildAction);
@@ -1158,7 +1158,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// <returns>An object that can be used to configure the entity type.</returns>
     public new virtual EntityTypeBuilder<TEntity> OwnsMany(
         string ownedTypeName,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type ownedType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type ownedType,
         string navigationName,
         Action<OwnedNavigationBuilder> buildAction)
         => (EntityTypeBuilder<TEntity>)base.OwnsMany(ownedTypeName, ownedType, navigationName, buildAction);
@@ -1188,7 +1188,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// <param name="buildAction">An action that performs configuration of the owned type and the relationship.</param>
     /// <returns>An object that can be used to configure the entity type.</returns>
     public virtual EntityTypeBuilder<TEntity> OwnsMany
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             string ownedTypeName,
             string navigationName,
             Action<OwnedNavigationBuilder<TEntity, TRelatedEntity>> buildAction)
@@ -1229,7 +1229,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// <param name="buildAction">An action that performs configuration of the owned type and the relationship.</param>
     /// <returns>An object that can be used to configure the entity type.</returns>
     public virtual EntityTypeBuilder<TEntity> OwnsMany
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             Expression<Func<TEntity, IEnumerable<TRelatedEntity>?>> navigationExpression,
             Action<OwnedNavigationBuilder<TEntity, TRelatedEntity>> buildAction)
         where TRelatedEntity : class
@@ -1270,7 +1270,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// <param name="buildAction">An action that performs configuration of the owned type and the relationship.</param>
     /// <returns>An object that can be used to configure the entity type.</returns>
     public virtual EntityTypeBuilder<TEntity> OwnsMany
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             string ownedTypeName,
             Expression<Func<TEntity, IEnumerable<TRelatedEntity>?>> navigationExpression,
             Action<OwnedNavigationBuilder<TEntity, TRelatedEntity>> buildAction)
@@ -1287,7 +1287,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     }
 
     private OwnedNavigationBuilder<TEntity, TRelatedEntity> OwnsManyBuilder
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             TypeIdentity ownedType,
             MemberIdentity navigation)
         where TRelatedEntity : class
@@ -1331,7 +1331,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// </param>
     /// <returns>An object that can be used to configure the relationship.</returns>
     public virtual ReferenceNavigationBuilder<TEntity, TRelatedEntity> HasOne
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             string? navigationName)
         where TRelatedEntity : class
     {
@@ -1374,7 +1374,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// </param>
     /// <returns>An object that can be used to configure the relationship.</returns>
     public virtual ReferenceNavigationBuilder<TEntity, TRelatedEntity> HasOne
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             Expression<Func<TEntity, TRelatedEntity?>>? navigationExpression = null)
         where TRelatedEntity : class
     {
@@ -1415,7 +1415,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// </param>
     /// <returns>An object that can be used to configure the relationship.</returns>
     public virtual CollectionNavigationBuilder<TEntity, TRelatedEntity> HasMany
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(string? navigationName)
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(string? navigationName)
         where TRelatedEntity : class
     {
         Check.NullButNotEmpty(navigationName, nameof(navigationName));
@@ -1470,7 +1470,7 @@ public class EntityTypeBuilder<[DynamicallyAccessedMembers(IEntityType.Dynamical
     /// </param>
     /// <returns>An object that can be used to configure the relationship.</returns>
     public virtual CollectionNavigationBuilder<TEntity, TRelatedEntity> HasMany
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity>(
             Expression<Func<TEntity, IEnumerable<TRelatedEntity>?>>? navigationExpression = null)
         where TRelatedEntity : class
     {

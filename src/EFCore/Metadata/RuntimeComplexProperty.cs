@@ -27,7 +27,7 @@ public class RuntimeComplexProperty : RuntimePropertyBase, IComplexProperty
         string name,
         Type clrType,
         string targetTypeName,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type targetType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type targetType,
         PropertyInfo? propertyInfo,
         FieldInfo? fieldInfo,
         RuntimeTypeBase declaringType,

@@ -49,7 +49,7 @@ public class DiscriminatorBuilder<TDiscriminator>
     /// <param name="value">The discriminator value.</param>
     /// <returns>The same builder so that multiple calls can be chained.</returns>
     public virtual DiscriminatorBuilder<TDiscriminator> HasValue
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TEntity>(TDiscriminator value)
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TEntity>(TDiscriminator value)
         => HasValue(typeof(TEntity), value);
 
     /// <summary>
@@ -59,7 +59,7 @@ public class DiscriminatorBuilder<TDiscriminator>
     /// <param name="value">The discriminator value.</param>
     /// <returns>The same builder so that multiple calls can be chained.</returns>
     public virtual DiscriminatorBuilder<TDiscriminator> HasValue(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type entityType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type entityType,
         TDiscriminator value)
         => new(Builder.HasValue(entityType, value));
 

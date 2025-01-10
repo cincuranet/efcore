@@ -54,7 +54,7 @@ public class RuntimeEntityType : RuntimeTypeBase, IRuntimeEntityType
     [EntityFrameworkInternal]
     public RuntimeEntityType(
         string name,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         bool sharedClrType,
         RuntimeModel model,
         RuntimeEntityType? baseType,

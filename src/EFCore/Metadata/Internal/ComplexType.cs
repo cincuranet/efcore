@@ -36,7 +36,7 @@ public class ComplexType : TypeBase, IMutableComplexType, IConventionComplexType
     /// </summary>
     public ComplexType(
         string name,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         ComplexProperty property,
         ConfigurationSource configurationSource)
         : base(name, type, property.DeclaringType.Model, configurationSource)

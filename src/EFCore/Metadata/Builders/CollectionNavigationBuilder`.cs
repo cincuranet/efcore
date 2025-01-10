@@ -19,8 +19,8 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Builders;
 /// <typeparam name="TEntity">The entity type to be configured.</typeparam>
 /// <typeparam name="TRelatedEntity">The entity type that this relationship targets.</typeparam>
 public class CollectionNavigationBuilder<
-    [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TEntity,
-    [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TRelatedEntity> : CollectionNavigationBuilder
+    [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TEntity,
+    [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TRelatedEntity> : CollectionNavigationBuilder
     where TEntity : class
     where TRelatedEntity : class
 {

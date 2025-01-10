@@ -293,7 +293,7 @@ public class DbContext :
     [EntityFrameworkInternal]
     object IDbSetCache.GetOrAddSet(
         IDbSetSource source,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type)
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type)
     {
         CheckDisposed();
 
@@ -319,7 +319,7 @@ public class DbContext :
     object IDbSetCache.GetOrAddSet(
         IDbSetSource source,
         string entityTypeName,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type)
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type)
     {
         CheckDisposed();
 
@@ -363,7 +363,7 @@ public class DbContext :
     /// </remarks>
     /// <typeparam name="TEntity">The type of entity for which a set should be returned.</typeparam>
     /// <returns>A set for the given entity type.</returns>
-    public virtual DbSet<TEntity> Set<[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TEntity>()
+    public virtual DbSet<TEntity> Set<[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TEntity>()
         where TEntity : class
         => (DbSet<TEntity>)((IDbSetCache)this).GetOrAddSet(DbContextDependencies.SetSource, typeof(TEntity));
 
@@ -384,11 +384,11 @@ public class DbContext :
     /// <param name="name">The name for the shared-type entity type to use.</param>
     /// <typeparam name="TEntity">The type of entity for which a set should be returned.</typeparam>
     /// <returns>A set for the given entity type.</returns>
-    public virtual DbSet<TEntity> Set<[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TEntity>(string name)
+    public virtual DbSet<TEntity> Set<[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TEntity>(string name)
         where TEntity : class
         => (DbSet<TEntity>)((IDbSetCache)this).GetOrAddSet(DbContextDependencies.SetSource, name, typeof(TEntity));
 
-    private IEntityFinder Finder([DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type)
+    private IEntityFinder Finder([DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type)
     {
         var entityType = Model.FindEntityType(type);
         if (entityType == null)
@@ -2072,7 +2072,7 @@ public class DbContext :
     /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
     /// <returns>The entity found, or <see langword="null" />.</returns>
     public virtual object? Find(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type entityType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type entityType,
         params object?[]? keyValues)
     {
         CheckDisposed();
@@ -2103,7 +2103,7 @@ public class DbContext :
     /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
     /// <returns>The entity found, or <see langword="null" />.</returns>
     public virtual ValueTask<object?> FindAsync(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type entityType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type entityType,
         params object?[]? keyValues)
     {
         CheckDisposed();
@@ -2136,7 +2136,7 @@ public class DbContext :
     /// <returns>The entity found, or <see langword="null" />.</returns>
     /// <exception cref="OperationCanceledException">If the <see cref="CancellationToken" /> is canceled.</exception>
     public virtual ValueTask<object?> FindAsync(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type entityType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type entityType,
         object?[]? keyValues,
         CancellationToken cancellationToken)
     {
@@ -2158,7 +2158,7 @@ public class DbContext :
     /// <typeparam name="TEntity">The type of entity to find.</typeparam>
     /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
     /// <returns>The entity found, or <see langword="null" />.</returns>
-    public virtual TEntity? Find<[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TEntity>(
+    public virtual TEntity? Find<[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TEntity>(
         params object?[]? keyValues)
         where TEntity : class
     {
@@ -2190,7 +2190,7 @@ public class DbContext :
     /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
     /// <returns>The entity found, or <see langword="null" />.</returns>
     public virtual ValueTask<TEntity?> FindAsync<
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TEntity>(params object?[]? keyValues)
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TEntity>(params object?[]? keyValues)
         where TEntity : class
     {
         CheckDisposed();
@@ -2222,7 +2222,7 @@ public class DbContext :
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
     /// <returns>The entity found, or <see langword="null" />.</returns>
     /// <exception cref="OperationCanceledException">If the <see cref="CancellationToken" /> is canceled.</exception>
-    public virtual ValueTask<TEntity?> FindAsync<[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TEntity>(
+    public virtual ValueTask<TEntity?> FindAsync<[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TEntity>(
         object?[]? keyValues,
         CancellationToken cancellationToken)
         where TEntity : class

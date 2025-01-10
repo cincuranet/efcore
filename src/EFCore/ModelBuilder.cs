@@ -141,7 +141,7 @@ public class ModelBuilder : IInfrastructure<IConventionModelBuilder>
     /// <typeparam name="TEntity">The entity type to be configured.</typeparam>
     /// <returns>An object that can be used to configure the entity type.</returns>
     public virtual EntityTypeBuilder<TEntity> Entity<
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TEntity>()
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TEntity>()
         where TEntity : class
         => new(Builder.Entity(typeof(TEntity), ConfigurationSource.Explicit, shouldBeOwned: false)!.Metadata);
 
@@ -166,7 +166,7 @@ public class ModelBuilder : IInfrastructure<IConventionModelBuilder>
     /// <param name="name">The name of the entity type to be configured.</param>
     /// <returns>An object that can be used to configure the entity type.</returns>
     public virtual EntityTypeBuilder<TEntity> SharedTypeEntity<
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TEntity>(
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TEntity>(
         string name)
         where TEntity : class
     {
@@ -184,7 +184,7 @@ public class ModelBuilder : IInfrastructure<IConventionModelBuilder>
     /// </remarks>
     /// <param name="type">The entity type to be configured.</param>
     /// <returns>An object that can be used to configure the entity type.</returns>
-    public virtual EntityTypeBuilder Entity([DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type)
+    public virtual EntityTypeBuilder Entity([DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type)
     {
         Check.NotNull(type, nameof(type));
 
@@ -230,7 +230,7 @@ public class ModelBuilder : IInfrastructure<IConventionModelBuilder>
     /// <returns>An object that can be used to configure the entity type.</returns>
     public virtual EntityTypeBuilder SharedTypeEntity(
         string name,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type)
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type)
     {
         Check.NotEmpty(name, nameof(name));
         Check.NotNull(type, nameof(type));
@@ -258,7 +258,7 @@ public class ModelBuilder : IInfrastructure<IConventionModelBuilder>
     /// <returns>
     ///     The same <see cref="ModelBuilder" /> instance so that additional configuration calls can be chained.
     /// </returns>
-    public virtual ModelBuilder Entity<[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TEntity>(
+    public virtual ModelBuilder Entity<[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TEntity>(
         Action<EntityTypeBuilder<TEntity>> buildAction)
         where TEntity : class
     {
@@ -297,7 +297,7 @@ public class ModelBuilder : IInfrastructure<IConventionModelBuilder>
     /// <returns>
     ///     The same <see cref="ModelBuilder" /> instance so that additional configuration calls can be chained.
     /// </returns>
-    public virtual ModelBuilder SharedTypeEntity<[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TEntity>(
+    public virtual ModelBuilder SharedTypeEntity<[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TEntity>(
         string name,
         Action<EntityTypeBuilder<TEntity>> buildAction)
         where TEntity : class
@@ -329,7 +329,7 @@ public class ModelBuilder : IInfrastructure<IConventionModelBuilder>
     ///     The same <see cref="ModelBuilder" /> instance so that additional configuration calls can be chained.
     /// </returns>
     public virtual ModelBuilder Entity(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         Action<EntityTypeBuilder> buildAction)
     {
         Check.NotNull(buildAction, nameof(buildAction));
@@ -398,7 +398,7 @@ public class ModelBuilder : IInfrastructure<IConventionModelBuilder>
     /// </returns>
     public virtual ModelBuilder SharedTypeEntity(
         string name,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         Action<EntityTypeBuilder> buildAction)
     {
         Check.NotNull(type, nameof(type));
@@ -420,7 +420,7 @@ public class ModelBuilder : IInfrastructure<IConventionModelBuilder>
     /// <returns>
     ///     The same <see cref="ModelBuilder" /> instance so that additional configuration calls can be chained.
     /// </returns>
-    public virtual ModelBuilder Ignore<[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TEntity>()
+    public virtual ModelBuilder Ignore<[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TEntity>()
         where TEntity : class
         => Ignore(typeof(TEntity));
 
@@ -435,7 +435,7 @@ public class ModelBuilder : IInfrastructure<IConventionModelBuilder>
     /// <returns>
     ///     The same <see cref="ModelBuilder" /> instance so that additional configuration calls can be chained.
     /// </returns>
-    public virtual ModelBuilder Ignore([DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type)
+    public virtual ModelBuilder Ignore([DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type)
     {
         Check.NotNull(type, nameof(type));
 
@@ -476,7 +476,7 @@ public class ModelBuilder : IInfrastructure<IConventionModelBuilder>
     ///     The same <see cref="ModelBuilder" /> instance so that additional configuration calls can be chained.
     /// </returns>
     public virtual ModelBuilder ApplyConfiguration
-        <[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TEntity>(IEntityTypeConfiguration<TEntity> configuration)
+        <[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TEntity>(IEntityTypeConfiguration<TEntity> configuration)
         where TEntity : class
     {
         Check.NotNull(configuration, nameof(configuration));
@@ -562,7 +562,7 @@ public class ModelBuilder : IInfrastructure<IConventionModelBuilder>
     ///     See <see href="https://aka.ms/efcore-docs-owned">Owned types in EF Core</see> for more information and examples.
     /// </remarks>
     /// <typeparam name="T">The entity type to be configured.</typeparam>
-    public virtual OwnedEntityTypeBuilder<T> Owned<[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] T>()
+    public virtual OwnedEntityTypeBuilder<T> Owned<[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] T>()
         where T : class
     {
         Builder.Owned(typeof(T), ConfigurationSource.Explicit);
@@ -578,7 +578,7 @@ public class ModelBuilder : IInfrastructure<IConventionModelBuilder>
     ///     See <see href="https://aka.ms/efcore-docs-owned">Owned types in EF Core</see> for more information and examples.
     /// </remarks>
     /// <param name="type">The entity type to be configured.</param>
-    public virtual OwnedEntityTypeBuilder Owned([DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type)
+    public virtual OwnedEntityTypeBuilder Owned([DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type)
     {
         Check.NotNull(type, nameof(type));
 

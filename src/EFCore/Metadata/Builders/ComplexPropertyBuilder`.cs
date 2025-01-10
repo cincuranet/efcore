@@ -16,7 +16,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Builders;
 ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see> for more information and examples.
 /// </remarks>
 /// <typeparam name="TComplex">The complex type being configured.</typeparam>
-public class ComplexPropertyBuilder<[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TComplex>
+public class ComplexPropertyBuilder<[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TComplex>
     : ComplexPropertyBuilder
 {
     /// <summary>

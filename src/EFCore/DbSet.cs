@@ -41,7 +41,7 @@ namespace Microsoft.EntityFrameworkCore;
 ///     </para>
 /// </remarks>
 /// <typeparam name="TEntity">The type of entity being operated on by this set.</typeparam>
-public abstract class DbSet<[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TEntity>
+public abstract class DbSet<[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TEntity>
     : IQueryable<TEntity>, IInfrastructure<IServiceProvider>, IListSource
     where TEntity : class
 {

@@ -74,7 +74,7 @@ public interface IMutableModel : IReadOnlyModel, IMutableAnnotatable
     /// </summary>
     /// <param name="type">The CLR class that is used to represent instances of the entity type.</param>
     /// <returns>The new entity type.</returns>
-    IMutableEntityType AddEntityType([DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type);
+    IMutableEntityType AddEntityType([DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type);
 
     /// <summary>
     ///     Adds a shared type entity type to the model.
@@ -86,7 +86,7 @@ public interface IMutableModel : IReadOnlyModel, IMutableAnnotatable
     /// <param name="name">The name of the entity to be added.</param>
     /// <param name="type">The CLR class that is used to represent instances of the entity type.</param>
     /// <returns>The new entity type.</returns>
-    IMutableEntityType AddEntityType(string name, [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type);
+    IMutableEntityType AddEntityType(string name, [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type);
 
     /// <summary>
     ///     Adds an owned entity type with a defining navigation to the model.
@@ -108,7 +108,7 @@ public interface IMutableModel : IReadOnlyModel, IMutableAnnotatable
     /// <param name="definingEntityType">The defining entity type.</param>
     /// <returns>The new entity type.</returns>
     IMutableEntityType AddEntityType(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         string definingNavigationName,
         IMutableEntityType definingEntityType);
 
@@ -128,7 +128,7 @@ public interface IMutableModel : IReadOnlyModel, IMutableAnnotatable
     /// </summary>
     /// <param name="type">The CLR class that is used to represent instances of the entity type.</param>
     /// <returns>The new entity type.</returns>
-    IMutableEntityType AddOwnedEntityType([DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type);
+    IMutableEntityType AddOwnedEntityType([DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type);
 
     /// <summary>
     ///     Adds an owned shared type entity type to the model.
@@ -140,7 +140,7 @@ public interface IMutableModel : IReadOnlyModel, IMutableAnnotatable
     /// <param name="name">The name of the entity to be added.</param>
     /// <param name="type">The CLR class that is used to represent instances of the entity type.</param>
     /// <returns>The new entity type.</returns>
-    IMutableEntityType AddOwnedEntityType(string name, [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type);
+    IMutableEntityType AddOwnedEntityType(string name, [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type);
 
     /// <summary>
     ///     Gets the entity with the given name. Returns <see langword="null" /> if no entity type with the given name is found

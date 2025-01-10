@@ -22,7 +22,7 @@ public class Model : ConventionAnnotatable, IMutableModel, IConventionModel, IRu
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)]
+    [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)]
     public static readonly Type DefaultPropertyBagType = typeof(Dictionary<string, object>);
 
     private readonly SortedDictionary<string, EntityType> _entityTypes = new(StringComparer.Ordinal);
@@ -159,7 +159,7 @@ public class Model : ConventionAnnotatable, IMutableModel, IConventionModel, IRu
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     public virtual EntityType? AddEntityType(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         bool owned,
         ConfigurationSource configurationSource)
     {
@@ -178,7 +178,7 @@ public class Model : ConventionAnnotatable, IMutableModel, IConventionModel, IRu
     /// </summary>
     public virtual EntityType? AddEntityType(
         string name,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         bool owned,
         ConfigurationSource configurationSource)
     {
@@ -361,7 +361,7 @@ public class Model : ConventionAnnotatable, IMutableModel, IConventionModel, IRu
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     public virtual EntityType? AddEntityType(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         string definingNavigationName,
         EntityType definingEntityType,
         ConfigurationSource configurationSource)
@@ -1391,7 +1391,7 @@ public class Model : ConventionAnnotatable, IMutableModel, IConventionModel, IRu
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     [DebuggerStepThrough]
-    IEntityType? IModel.FindEntityType([DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type)
+    IEntityType? IModel.FindEntityType([DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type)
         => FindEntityType(type);
 
     /// <summary>
@@ -1546,7 +1546,7 @@ public class Model : ConventionAnnotatable, IMutableModel, IConventionModel, IRu
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     [DebuggerStepThrough]
-    IMutableEntityType IMutableModel.AddEntityType([DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type)
+    IMutableEntityType IMutableModel.AddEntityType([DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type)
         => AddEntityType(type, owned: false, ConfigurationSource.Explicit)!;
 
     /// <summary>
@@ -1557,7 +1557,7 @@ public class Model : ConventionAnnotatable, IMutableModel, IConventionModel, IRu
     /// </summary>
     [DebuggerStepThrough]
     IConventionEntityType? IConventionModel.AddEntityType(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         bool fromDataAnnotation)
         => AddEntityType(type, owned: false, fromDataAnnotation ? ConfigurationSource.DataAnnotation : ConfigurationSource.Convention);
 
@@ -1570,7 +1570,7 @@ public class Model : ConventionAnnotatable, IMutableModel, IConventionModel, IRu
     [DebuggerStepThrough]
     IMutableEntityType IMutableModel.AddEntityType(
         string name,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type)
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type)
         => AddEntityType(name, type, owned: false, ConfigurationSource.Explicit)!;
 
     /// <summary>
@@ -1582,7 +1582,7 @@ public class Model : ConventionAnnotatable, IMutableModel, IConventionModel, IRu
     [DebuggerStepThrough]
     IConventionEntityType? IConventionModel.AddEntityType(
         string name,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         bool fromDataAnnotation)
         => AddEntityType(
             name, type, owned: false, fromDataAnnotation ? ConfigurationSource.DataAnnotation : ConfigurationSource.Convention);
@@ -1625,7 +1625,7 @@ public class Model : ConventionAnnotatable, IMutableModel, IConventionModel, IRu
     /// </summary>
     [DebuggerStepThrough]
     IMutableEntityType IMutableModel.AddEntityType(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         string definingNavigationName,
         IMutableEntityType definingEntityType)
         => AddEntityType(type, definingNavigationName, (EntityType)definingEntityType, ConfigurationSource.Explicit)!;
@@ -1639,7 +1639,7 @@ public class Model : ConventionAnnotatable, IMutableModel, IConventionModel, IRu
     [Obsolete] // The interface didn't mark method obsolete
     [DebuggerStepThrough]
     IConventionEntityType? IConventionModel.AddEntityType(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         string definingNavigationName,
         IConventionEntityType definingEntityType,
         bool fromDataAnnotation)
@@ -1674,7 +1674,7 @@ public class Model : ConventionAnnotatable, IMutableModel, IConventionModel, IRu
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     [DebuggerStepThrough]
-    IMutableEntityType IMutableModel.AddOwnedEntityType([DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type)
+    IMutableEntityType IMutableModel.AddOwnedEntityType([DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type)
         => AddEntityType(type, owned: true, ConfigurationSource.Explicit)!;
 
     /// <summary>
@@ -1685,7 +1685,7 @@ public class Model : ConventionAnnotatable, IMutableModel, IConventionModel, IRu
     /// </summary>
     [DebuggerStepThrough]
     IConventionEntityType? IConventionModel.AddOwnedEntityType(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         bool fromDataAnnotation)
         => AddEntityType(type, owned: true, fromDataAnnotation ? ConfigurationSource.DataAnnotation : ConfigurationSource.Convention);
 
@@ -1698,7 +1698,7 @@ public class Model : ConventionAnnotatable, IMutableModel, IConventionModel, IRu
     [DebuggerStepThrough]
     IMutableEntityType IMutableModel.AddOwnedEntityType(
         string name,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type)
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type)
         => AddEntityType(name, type, owned: true, ConfigurationSource.Explicit)!;
 
     /// <summary>
@@ -1710,7 +1710,7 @@ public class Model : ConventionAnnotatable, IMutableModel, IConventionModel, IRu
     [DebuggerStepThrough]
     IConventionEntityType? IConventionModel.AddOwnedEntityType(
         string name,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         bool fromDataAnnotation)
         => AddEntityType(
             name, type, owned: true,

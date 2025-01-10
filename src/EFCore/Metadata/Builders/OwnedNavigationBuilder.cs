@@ -434,7 +434,7 @@ public class OwnedNavigationBuilder : IInfrastructure<IConventionEntityTypeBuild
     /// <returns>An object that can be used to configure the relationship.</returns>
     public virtual OwnedNavigationBuilder OwnsOne(
         string ownedTypeName,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type ownedType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type ownedType,
         string navigationName)
     {
         Check.NotNull(ownedType, nameof(ownedType));
@@ -468,7 +468,7 @@ public class OwnedNavigationBuilder : IInfrastructure<IConventionEntityTypeBuild
     /// </param>
     /// <returns>An object that can be used to configure the relationship.</returns>
     public virtual OwnedNavigationBuilder OwnsOne(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type ownedType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type ownedType,
         string navigationName)
     {
         Check.NotNull(ownedType, nameof(ownedType));
@@ -545,7 +545,7 @@ public class OwnedNavigationBuilder : IInfrastructure<IConventionEntityTypeBuild
     /// <returns>An object that can be used to configure the entity type.</returns>
     public virtual OwnedNavigationBuilder OwnsOne(
         string ownedTypeName,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type ownedType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type ownedType,
         string navigationName,
         Action<OwnedNavigationBuilder> buildAction)
     {
@@ -586,7 +586,7 @@ public class OwnedNavigationBuilder : IInfrastructure<IConventionEntityTypeBuild
     /// <param name="buildAction">An action that performs configuration of the relationship.</param>
     /// <returns>An object that can be used to configure the entity type.</returns>
     public virtual OwnedNavigationBuilder OwnsOne(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type ownedType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type ownedType,
         string navigationName,
         Action<OwnedNavigationBuilder> buildAction)
     {
@@ -669,7 +669,7 @@ public class OwnedNavigationBuilder : IInfrastructure<IConventionEntityTypeBuild
     /// <returns>An object that can be used to configure the owned type and the relationship.</returns>
     public virtual OwnedNavigationBuilder OwnsMany(
         string ownedTypeName,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type ownedType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type ownedType,
         string navigationName)
     {
         Check.NotNull(ownedType, nameof(ownedType));
@@ -702,7 +702,7 @@ public class OwnedNavigationBuilder : IInfrastructure<IConventionEntityTypeBuild
     /// </param>
     /// <returns>An object that can be used to configure the owned type and the relationship.</returns>
     public virtual OwnedNavigationBuilder OwnsMany(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type ownedType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type ownedType,
         string navigationName)
     {
         Check.NotNull(ownedType, nameof(ownedType));
@@ -777,7 +777,7 @@ public class OwnedNavigationBuilder : IInfrastructure<IConventionEntityTypeBuild
     /// <returns>An object that can be used to configure the entity type.</returns>
     public virtual OwnedNavigationBuilder OwnsMany(
         string ownedTypeName,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type ownedType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type ownedType,
         string navigationName,
         Action<OwnedNavigationBuilder> buildAction)
     {
@@ -817,7 +817,7 @@ public class OwnedNavigationBuilder : IInfrastructure<IConventionEntityTypeBuild
     /// <param name="buildAction">An action that performs configuration of the owned type and the relationship.</param>
     /// <returns>An object that can be used to configure the entity type.</returns>
     public virtual OwnedNavigationBuilder OwnsMany(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type ownedType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type ownedType,
         string navigationName,
         Action<OwnedNavigationBuilder> buildAction)
     {
@@ -946,7 +946,7 @@ public class OwnedNavigationBuilder : IInfrastructure<IConventionEntityTypeBuild
     /// </param>
     /// <returns>An object that can be used to configure the relationship.</returns>
     public virtual ReferenceNavigationBuilder HasOne(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type relatedType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type relatedType,
         string? navigationName = null)
     {
         Check.NotNull(relatedType, nameof(relatedType));
@@ -1032,7 +1032,7 @@ public class OwnedNavigationBuilder : IInfrastructure<IConventionEntityTypeBuild
     /// </summary>
     [EntityFrameworkInternal]
     protected virtual EntityType FindRelatedEntityType(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type relatedType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type relatedType,
         string? navigationName)
     {
         var relatedEntityType = (EntityType?)DependentEntityType.FindInOwnershipPath(relatedType);

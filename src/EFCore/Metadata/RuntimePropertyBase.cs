@@ -212,7 +212,7 @@ public abstract class RuntimePropertyBase : RuntimeAnnotatableBase, IRuntimeProp
     }
 
     /// <inheritdoc />
-    [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)]
+    [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)]
     Type IReadOnlyPropertyBase.ClrType
     {
         [DebuggerStepThrough]

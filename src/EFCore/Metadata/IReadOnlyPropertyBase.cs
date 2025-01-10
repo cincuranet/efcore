@@ -26,7 +26,7 @@ public interface IReadOnlyPropertyBase : IReadOnlyAnnotatable
     /// <summary>
     ///     Gets the type of value that this property-like object holds.
     /// </summary>
-    [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes | IProperty.DynamicallyAccessedMemberTypes)]
+    [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes | IProperty.DynamicallyAccessedMemberTypes)]
     Type ClrType { get; }
 
     /// <summary>

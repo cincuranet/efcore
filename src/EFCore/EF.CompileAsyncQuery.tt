@@ -28,7 +28,7 @@ namespace Microsoft.EntityFrameworkCore
         /// <returns>A delegate that can be invoked to execute the compiled query.</returns>
         public static Func<TContext, IAsyncEnumerable<TResult>> CompileAsyncQuery<
             TContext,
-            [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TResult>(
+            [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TResult>(
             Expression<Func<TContext, DbSet<TResult>>> queryExpression)
             where TContext : DbContext
             where TResult : class

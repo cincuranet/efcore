@@ -79,7 +79,7 @@ public class DiscriminatorBuilder : IConventionDiscriminatorBuilder
     /// <typeparam name="TEntity">The entity type for which a discriminator value is being set.</typeparam>
     /// <param name="value">The discriminator value.</param>
     /// <returns>The same builder so that multiple calls can be chained.</returns>
-    public virtual DiscriminatorBuilder HasValue<[DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] TEntity>(
+    public virtual DiscriminatorBuilder HasValue<[DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] TEntity>(
         object? value)
         => HasValue(typeof(TEntity), value);
 
@@ -90,7 +90,7 @@ public class DiscriminatorBuilder : IConventionDiscriminatorBuilder
     /// <param name="value">The discriminator value.</param>
     /// <returns>The same builder so that multiple calls can be chained.</returns>
     public virtual DiscriminatorBuilder HasValue(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type entityType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type entityType,
         object? value)
     {
         var entityTypeBuilder = EntityTypeBuilder.ModelBuilder.Entity(

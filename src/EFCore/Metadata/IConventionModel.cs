@@ -106,7 +106,7 @@ public interface IConventionModel : IReadOnlyModel, IConventionAnnotatable
     /// <param name="fromDataAnnotation">Indicates whether the configuration was specified using a data annotation.</param>
     /// <returns>The new entity type.</returns>
     IConventionEntityType? AddEntityType(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         bool fromDataAnnotation = false);
 
     /// <summary>
@@ -122,7 +122,7 @@ public interface IConventionModel : IReadOnlyModel, IConventionAnnotatable
     /// <returns>The new entity type.</returns>
     IConventionEntityType? AddEntityType(
         string name,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type clrType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type clrType,
         bool fromDataAnnotation = false);
 
     /// <summary>
@@ -148,7 +148,7 @@ public interface IConventionModel : IReadOnlyModel, IConventionAnnotatable
     /// <param name="fromDataAnnotation">Indicates whether the configuration was specified using a data annotation.</param>
     /// <returns>The new entity type.</returns>
     IConventionEntityType? AddEntityType(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         string definingNavigationName,
         IConventionEntityType definingEntityType,
         bool fromDataAnnotation = false);
@@ -172,7 +172,7 @@ public interface IConventionModel : IReadOnlyModel, IConventionAnnotatable
     /// <param name="fromDataAnnotation">Indicates whether the configuration was specified using a data annotation.</param>
     /// <returns>The new entity type.</returns>
     IConventionEntityType? AddOwnedEntityType(
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         bool fromDataAnnotation = false);
 
     /// <summary>
@@ -188,7 +188,7 @@ public interface IConventionModel : IReadOnlyModel, IConventionAnnotatable
     /// <returns>The new entity type.</returns>
     IConventionEntityType? AddOwnedEntityType(
         string name,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type clrType,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type clrType,
         bool fromDataAnnotation = false);
 
     /// <summary>

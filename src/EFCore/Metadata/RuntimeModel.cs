@@ -120,7 +120,7 @@ public class RuntimeModel : RuntimeAnnotatableBase, IRuntimeModel
     /// <returns>The new entity type.</returns>
     public virtual RuntimeEntityType AddEntityType(
         string name,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         RuntimeEntityType? baseType = null,
         bool sharedClrType = false,
         string? discriminatorProperty = null,
@@ -292,7 +292,7 @@ public class RuntimeModel : RuntimeAnnotatableBase, IRuntimeModel
     private string GetDisplayName(Type type)
         => _clrTypeNameMap.GetOrAdd(type, t => t.DisplayName());
 
-    private PropertyInfo? FindIndexerPropertyInfo([DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type)
+    private PropertyInfo? FindIndexerPropertyInfo([DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type)
         => _indexerPropertyInfoMap.GetOrAdd(type, type.FindIndexerProperty());
 
     /// <summary>
@@ -373,7 +373,7 @@ public class RuntimeModel : RuntimeAnnotatableBase, IRuntimeModel
 
     /// <inheritdoc />
     [DebuggerStepThrough]
-    IEntityType? IModel.FindEntityType([DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type)
+    IEntityType? IModel.FindEntityType([DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type)
         => FindEntityType(type);
 
     /// <inheritdoc />

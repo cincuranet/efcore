@@ -23,7 +23,7 @@ public interface IReadOnlyElementType : IReadOnlyAnnotatable
     /// <summary>
     ///     The type of elements in the collection.
     /// </summary>
-    [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes | IProperty.DynamicallyAccessedMemberTypes)]
+    [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes | IProperty.DynamicallyAccessedMemberTypes)]
     Type ClrType { get; }
 
     /// <summary>

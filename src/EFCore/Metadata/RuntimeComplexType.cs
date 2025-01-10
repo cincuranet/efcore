@@ -29,7 +29,7 @@ public class RuntimeComplexType : RuntimeTypeBase, IRuntimeComplexType
     [EntityFrameworkInternal]
     public RuntimeComplexType(
         string name,
-        [DynamicallyAccessedMembers(IEntityType.DynamicallyAccessedMemberTypes)] Type type,
+        [DynamicallyAccessedMembers(ITypeBase.DynamicallyAccessedMemberTypes)] Type type,
         RuntimeComplexProperty complexProperty,
         ChangeTrackingStrategy changeTrackingStrategy,
         PropertyInfo? indexerPropertyInfo,
