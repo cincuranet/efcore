@@ -5,6 +5,7 @@
     <OutputType>Exe</OutputType>
     <RuntimeIdentifier>{RuntimeIdentifier}</RuntimeIdentifier>
     <PublishAot>{PublishAot}</PublishAot>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
     <_ExtraTrimmerArgs>{ExtraTrimmerArgs} $(_ExtraTrimmerArgs)</_ExtraTrimmerArgs>
     {AdditionalProperties}
   </PropertyGroup>
