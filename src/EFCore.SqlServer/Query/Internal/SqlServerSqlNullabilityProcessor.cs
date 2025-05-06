@@ -190,6 +190,7 @@ public class SqlServerSqlNullabilityProcessor : SqlNullabilityProcessor
                 }
                 return base.VisitExtension(node);
             }
+
             default:
                 return base.VisitExtension(node);
         }
