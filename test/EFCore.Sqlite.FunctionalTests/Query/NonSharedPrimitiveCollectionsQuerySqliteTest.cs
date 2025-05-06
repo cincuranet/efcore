@@ -21,6 +21,13 @@ public class NonSharedPrimitiveCollectionsQuerySqliteTest(NonSharedFixture fixtu
         return optionsBuilder;
     }
 
+    protected override DbContextOptionsBuilder SetTranslateParameterizedCollectionsToExpandedParameters(DbContextOptionsBuilder optionsBuilder)
+    {
+        new SqliteDbContextOptionsBuilder(optionsBuilder).TranslateParameterizedCollectionsToExpandedParameters();
+
+        return optionsBuilder;
+    }
+
     #region Support for specific element types
 
     public override async Task Array_of_int()

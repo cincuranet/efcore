@@ -8,7 +8,7 @@ namespace Microsoft.EntityFrameworkCore.Query;
 #nullable disable
 using static Expression;
 
-public class NonSharedPrimitiveCollectionsQuerySqlServerTest(NonSharedFixture fixture) : NonSharedPrimitiveCollectionsQueryRelationalTestBase(fixture)
+public class NonSharedPrimitiveCollectionsQuerySqlServerTest(NonSharedFixture fixture, ITestOutputHelper testOutputHelper) : NonSharedPrimitiveCollectionsQueryRelationalTestBase(fixture)
 {
     protected override DbContextOptionsBuilder SetTranslateParameterizedCollectionsToConstants(DbContextOptionsBuilder optionsBuilder)
     {
@@ -20,6 +20,13 @@ public class NonSharedPrimitiveCollectionsQuerySqlServerTest(NonSharedFixture fi
     protected override DbContextOptionsBuilder SetTranslateParameterizedCollectionsToParameters(DbContextOptionsBuilder optionsBuilder)
     {
         new SqlServerDbContextOptionsBuilder(optionsBuilder).TranslateParameterizedCollectionsToParameters();
+
+        return optionsBuilder;
+    }
+
+    protected override DbContextOptionsBuilder SetTranslateParameterizedCollectionsToExpandedParameters(DbContextOptionsBuilder optionsBuilder)
+    {
+        new SqlServerDbContextOptionsBuilder(optionsBuilder).TranslateParameterizedCollectionsToExpandedParameters();
 
         return optionsBuilder;
     }
@@ -1091,4 +1098,16 @@ WHERE (
 
     protected override ITestStoreFactory TestStoreFactory
         => SqlServerTestStoreFactory.Instance;
+
+    [Fact]
+    public async Task FooBar()
+    {
+        var contextFactory = await InitializeAsync<TestContext>(
+            onConfiguring: b => SetTranslateParameterizedCollectionsToExpandedParameters(b));
+        await using var context = contextFactory.CreateContext();
+        var ids = Enumerable.Range(1, 3000);
+        await context.Set<TestEntity>().Where(c => ids.Count(i => i > c.Id) == 2).LoadAsync();
+
+        testOutputHelper.WriteLine(TestSqlLoggerFactory.SqlStatements[0]);
+    }
 }

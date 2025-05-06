@@ -295,11 +295,25 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
 
         var primitiveCollectionsBehavior = RelationalOptionsExtension.Extract(QueryCompilationContext.ContextOptions)
             .ParameterizedCollectionTranslationMode;
-
         var tableAlias = _sqlAliasManager.GenerateTableAlias(sqlParameterExpression.Name.TrimStart('_'));
+
         if (queryParameter.ShouldBeConstantized
             || (primitiveCollectionsBehavior == ParameterizedCollectionTranslationMode.Constantize
                 && !queryParameter.ShouldNotBeConstantized))
+        {
+            var valuesExpression = new ValuesExpression(
+                tableAlias,
+                sqlParameterExpression,
+                [ValuesOrderingColumnName, ValuesValueColumnName]);
+            return CreateShapedQueryExpressionForValuesExpression(
+                valuesExpression,
+                tableAlias,
+                parameterQueryRootExpression.ElementType,
+                sqlParameterExpression.TypeMapping,
+                sqlParameterExpression.IsNullable);
+        }
+
+        if (primitiveCollectionsBehavior == ParameterizedCollectionTranslationMode.ParameterizeExpanded)
         {
             var valuesExpression = new ValuesExpression(
                 tableAlias,

@@ -1,7 +1,9 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
@@ -145,5 +147,52 @@ public class SqlServerSqlNullabilityProcessor : SqlNullabilityProcessor
         => table is SqlServerOpenJsonExpression { Arguments: [SqlParameterExpression] } openJsonExpression
             ? openJsonExpression.Update(newCollectionParameter, path: null)
             : base.UpdateParameterCollection(table, newCollectionParameter);
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
+    protected override Expression VisitExtension(Expression node)
+    {
+        switch (node)
+        {
+            case ValuesExpression { ValuesParameter: SqlParameterExpression valuesParameter } valuesExpression
+                when ParameterizedCollectionTranslationMode == EntityFrameworkCore.Internal.ParameterizedCollectionTranslationMode.ParameterizeExpanded:
+            {
+                var valuesCount = ((IEnumerable?)ParameterValues[valuesParameter.Name])?.Count();
+                if (valuesCount > 2098)
+                {
+                    DoNotCache();
+                    Check.DebugAssert(valuesParameter.TypeMapping is not null, "valuesParameter.TypeMapping is not null");
+                    Check.DebugAssert(
+                        valuesParameter.TypeMapping.ElementTypeMapping is not null,
+                        "valuesParameter.TypeMapping.ElementTypeMapping is not null");
+                    var typeMapping = (RelationalTypeMapping)valuesParameter.TypeMapping.ElementTypeMapping;
+                    var openJsonExpression = new SqlServerOpenJsonExpression(
+                        valuesExpression.Alias,
+                        valuesExpression.ValuesParameter,
+                        columnInfos:
+                        [
+                            new SqlServerOpenJsonExpression.ColumnInfo
+                            {
+                                Name = "value",
+                                TypeMapping = typeMapping,
+                                Path = []
+                            }
+                        ]);
+                    var jsonPostprocessor = new SqlServerJsonPostprocessor(
+                        Dependencies.TypeMappingSource,
+                        Dependencies.SqlExpressionFactory,
+                        null);
+                    return jsonPostprocessor.Process(openJsonExpression);
+                }
+                return base.VisitExtension(node);
+            }
+            default:
+                return base.VisitExtension(node);
+        }
+    }
 #pragma warning restore EF1001
 }

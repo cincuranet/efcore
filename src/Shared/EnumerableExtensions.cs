@@ -128,6 +128,16 @@ internal static class EnumerableExtensions
     public static List<TSource> ToList<TSource>(this IEnumerable source)
         => source.OfType<TSource>().ToList();
 
+    public static int Count(this IEnumerable source)
+    {
+        var cnt = 0;
+        foreach (var _ in source)
+        {
+            cnt++;
+        }
+        return cnt;
+    }
+
     public static string Format(this IEnumerable<string> strings)
         => "{"
             + string.Join(
