@@ -1106,7 +1106,8 @@ WHERE (
             onConfiguring: b => SetTranslateParameterizedCollectionsToExpandedParameters(b));
         await using var context = contextFactory.CreateContext();
         var ids = Enumerable.Range(1, 3000);
-        await context.Set<TestEntity>().Where(c => ids.Count(i => i > c.Id) == 2).LoadAsync();
+        //await context.Set<TestEntity>().Where(c => ids.Count(i => i > c.Id) == 2).LoadAsync();
+        await context.Set<TestEntity>().Where(c => ids.Contains(c.Id)).LoadAsync();
 
         testOutputHelper.WriteLine(TestSqlLoggerFactory.SqlStatements[0]);
     }
