@@ -132,9 +132,9 @@ public class SqlNullabilityProcessor : ExpressionVisitor
 
                 var processedValues = new List<RowValueExpression>();
 
-                if (ParameterizedCollectionTranslationMode == EntityFrameworkCore.Internal.ParameterizedCollectionTranslationMode.ParameterizeExpanded)
+                foreach (var value in values)
                 {
-                    foreach (var value in values)
+                    if (ParameterizedCollectionTranslationMode == EntityFrameworkCore.Internal.ParameterizedCollectionTranslationMode.ParameterizeExpanded)
                     {
                         var parameterName = Uniquifier.Uniquify(valuesParameter.Name, ParameterValues, int.MaxValue);
                         ParameterValues.Add(parameterName, value);
@@ -144,10 +144,7 @@ public class SqlNullabilityProcessor : ExpressionVisitor
                                     new SqlParameterExpression(parameterName, value?.GetType() ?? typeof(object), typeMapping)
                                 ]));
                     }
-                }
-                else
-                {
-                    foreach (var value in values)
+                    else
                     {
                         processedValues.Add(
                             new RowValueExpression(
@@ -788,8 +785,16 @@ public class SqlNullabilityProcessor : ExpressionVisitor
                         hasNull = true;
                         continue;
                     }
-
-                    processedValues.Add(_sqlExpressionFactory.Constant(value, value?.GetType() ?? typeof(object), sensitive: true, typeMapping));
+                    if (ParameterizedCollectionTranslationMode == EntityFrameworkCore.Internal.ParameterizedCollectionTranslationMode.ParameterizeExpanded)
+                    {
+                        var parameterName = Uniquifier.Uniquify(valuesParameter.Name, ParameterValues, int.MaxValue);
+                        ParameterValues.Add(parameterName, value);
+                        processedValues.Add(new SqlParameterExpression(parameterName, value?.GetType() ?? typeof(object), typeMapping));
+                    }
+                    else
+                    {
+                        processedValues.Add(_sqlExpressionFactory.Constant(value, value?.GetType() ?? typeof(object), sensitive: true, typeMapping));
+                    }
                 }
             }
             else
