@@ -16,6 +16,8 @@ public abstract class NonSharedPrimitiveCollectionsQueryRelationalTestBase(NonSh
 
     protected abstract DbContextOptionsBuilder SetTranslateParameterizedCollectionsToParameters(DbContextOptionsBuilder optionsBuilder);
 
+    protected abstract DbContextOptionsBuilder SetTranslateParameterizedCollectionsToExpandedParameters(DbContextOptionsBuilder optionsBuilder);
+
     [ConditionalFact]
     public virtual async Task Column_collection_inside_json_owned_entity()
     {

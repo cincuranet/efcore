@@ -3,6 +3,7 @@
 
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace Microsoft.EntityFrameworkCore.Query;
@@ -35,6 +36,7 @@ public class SqlNullabilityProcessor : ExpressionVisitor
     {
         Dependencies = dependencies;
         UseRelationalNulls = parameters.UseRelationalNulls;
+        ParameterizedCollectionTranslationMode = parameters.ParameterizedCollectionTranslationMode;
 
         _sqlExpressionFactory = dependencies.SqlExpressionFactory;
         _nonNullableColumns = [];
@@ -53,9 +55,14 @@ public class SqlNullabilityProcessor : ExpressionVisitor
     protected virtual bool UseRelationalNulls { get; }
 
     /// <summary>
+    ///     A value indicating what translation mode to use.
+    /// </summary>
+    public ParameterizedCollectionTranslationMode? ParameterizedCollectionTranslationMode { get; }
+
+    /// <summary>
     ///     Dictionary of current parameter values in use.
     /// </summary>
-    protected virtual IReadOnlyDictionary<string, object?> ParameterValues { get; private set; }
+    protected virtual Dictionary<string, object?> ParameterValues { get; private set; }
 
     /// <summary>
     ///     Processes a query expression to apply null semantics and optimize it.
@@ -66,7 +73,7 @@ public class SqlNullabilityProcessor : ExpressionVisitor
     /// <returns>An optimized query expression.</returns>
     public virtual Expression Process(
         Expression queryExpression,
-        IReadOnlyDictionary<string, object?> parameterValues,
+        Dictionary<string, object?> parameterValues,
         out bool canCache)
     {
         _canCache = true;
@@ -124,13 +131,30 @@ public class SqlNullabilityProcessor : ExpressionVisitor
                 var values = (IEnumerable?)ParameterValues[valuesParameter.Name] ?? Array.Empty<object>();
 
                 var processedValues = new List<RowValueExpression>();
-                foreach (var value in values)
+
+                if (ParameterizedCollectionTranslationMode == EntityFrameworkCore.Internal.ParameterizedCollectionTranslationMode.ParameterizeExpanded)
                 {
-                    processedValues.Add(
-                        new RowValueExpression(
-                        [
-                            _sqlExpressionFactory.Constant(value, value?.GetType() ?? typeof(object), sensitive: true, typeMapping)
-                        ]));
+                    foreach (var value in values)
+                    {
+                        var parameterName = Uniquifier.Uniquify(valuesParameter.Name, ParameterValues, int.MaxValue);
+                        ParameterValues.Add(parameterName, value);
+                        processedValues.Add(
+                            new RowValueExpression(
+                                [
+                                    new SqlParameterExpression(parameterName, value?.GetType() ?? typeof(object), typeMapping)
+                                ]));
+                    }
+                }
+                else
+                {
+                    foreach (var value in values)
+                    {
+                        processedValues.Add(
+                            new RowValueExpression(
+                            [
+                                _sqlExpressionFactory.Constant(value, value?.GetType() ?? typeof(object), sensitive: true, typeMapping)
+                            ]));
+                    }
                 }
 
                 return processedValues is not []
@@ -1745,20 +1769,9 @@ public class SqlNullabilityProcessor : ExpressionVisitor
 
             foundNull = true;
 
-            // TODO: We currently only have read-only access to the parameter values in the nullability processor (and in all of the
-            // 2nd-level query pipeline); to need to flow the mutable dictionary in. Note that any modification of parameter values (as
-            // here) must immediately entail DoNotCache().
-            Check.DebugAssert(ParameterValues is Dictionary<string, object?>, "ParameterValues isn't a Dictionary");
-            if (ParameterValues is not Dictionary<string, object?> mutableParameterValues)
-            {
-                rewrittenSelectExpression = null;
-                foundNull = null;
-                return false;
-            }
-
             var rewrittenParameter = new SqlParameterExpression(
                 collectionParameter.Name + "_without_nulls", collectionParameter.Type, collectionParameter.TypeMapping);
-            mutableParameterValues[rewrittenParameter.Name] = processedValues;
+            ParameterValues[rewrittenParameter.Name] = processedValues;
             var rewrittenCollectionTable = UpdateParameterCollection(collectionTable, rewrittenParameter);
 
             // We clone the select expression since Update below doesn't create a pure copy, mutating the original as well (because of
