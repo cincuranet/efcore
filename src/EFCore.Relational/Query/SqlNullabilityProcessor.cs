@@ -57,7 +57,7 @@ public class SqlNullabilityProcessor : ExpressionVisitor
     /// <summary>
     ///     A value indicating what translation mode to use.
     /// </summary>
-    public ParameterizedCollectionTranslationMode? ParameterizedCollectionTranslationMode { get; }
+    public virtual ParameterizedCollectionTranslationMode? ParameterizedCollectionTranslationMode { get; }
 
     /// <summary>
     ///     Dictionary of current parameter values in use.
