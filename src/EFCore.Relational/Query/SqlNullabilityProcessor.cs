@@ -524,16 +524,24 @@ public class SqlNullabilityProcessor : ExpressionVisitor
             }
 
             var projectionExpression = Visit(subqueryProjection, allowOptimizedExpansion, out var projectionNullable);
-            inExpression = inExpression.Update(
-                item, subquery.Update(
-                    subquery.Tables,
-                    subquery.Predicate,
-                    subquery.GroupBy,
-                    subquery.Having,
-                    projections: [subquery.Projection[0].Update(projectionExpression)],
-                    subquery.Orderings,
-                    subquery.Offset,
-                    subquery.Limit));
+            if (subquery is { Tables: [ValuesExpression { RowValues: { } rowValues }] })
+            {
+                inExpression = inExpression.Update(
+                    item, [.. rowValues.SelectMany(r => r.Values)]);
+            }
+            else
+            {
+                inExpression = inExpression.Update(
+                    item, subquery.Update(
+                        subquery.Tables,
+                        subquery.Predicate,
+                        subquery.GroupBy,
+                        subquery.Having,
+                        projections: [subquery.Projection[0].Update(projectionExpression)],
+                        subquery.Orderings,
+                        subquery.Offset,
+                        subquery.Limit));
+            }
 
             if (UseRelationalNulls)
             {

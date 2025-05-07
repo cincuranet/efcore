@@ -583,8 +583,12 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
             return TranslateAny(source, anyLambda);
         }
 
-        // Pattern-match Contains over ValuesExpression, translating to simplified 'item IN (1, 2, 3)' with constant elements
-        if (TryExtractBareInlineCollectionValues(source, out var values, out var valuesParameter))
+        var primitiveCollectionsBehavior = RelationalOptionsExtension.Extract(QueryCompilationContext.ContextOptions)
+            .ParameterizedCollectionTranslationMode;
+        // Pattern-match Contains over ValuesExpression, translating to simplified 'item IN (1, 2, 3)' with constant elements.
+        // Expanding parameters will happen in 2nd stage of query pipeline.
+        if (primitiveCollectionsBehavior != ParameterizedCollectionTranslationMode.ParameterizeExpanded
+            && TryExtractBareInlineCollectionValues(source, out var values, out var valuesParameter))
         {
             var inExpression = (values, valuesParameter) switch
             {
