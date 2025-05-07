@@ -172,7 +172,7 @@ public class SqlServerSqlNullabilityProcessor : SqlNullabilityProcessor
                     var typeMapping = (RelationalTypeMapping)valuesParameter.TypeMapping.ElementTypeMapping;
                     var openJsonExpression = new SqlServerOpenJsonExpression(
                         valuesExpression.Alias,
-                        valuesExpression.ValuesParameter,
+                        valuesParameter,
                         columnInfos:
                         [
                             new SqlServerOpenJsonExpression.ColumnInfo
