@@ -159,7 +159,7 @@ public class SqlServerSqlNullabilityProcessor : SqlNullabilityProcessor
         switch (node)
         {
             case ValuesExpression { ValuesParameter: SqlParameterExpression valuesParameter } valuesExpression
-                when ParameterizedCollectionTranslationMode == EntityFrameworkCore.Internal.ParameterizedCollectionTranslationMode.ParameterizeExpanded:
+                when ParameterizedCollectionTranslationMode is null or EntityFrameworkCore.Internal.ParameterizedCollectionTranslationMode.ParameterizeExpanded:
             {
                 var valuesCount = ((IEnumerable?)ParameterValues[valuesParameter.Name])?.Count();
                 if (valuesCount > 2098)

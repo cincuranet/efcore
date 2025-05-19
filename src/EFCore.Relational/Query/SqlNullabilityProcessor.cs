@@ -134,7 +134,7 @@ public class SqlNullabilityProcessor : ExpressionVisitor
 
                 foreach (var value in values)
                 {
-                    if (ParameterizedCollectionTranslationMode == EntityFrameworkCore.Internal.ParameterizedCollectionTranslationMode.ParameterizeExpanded)
+                    if (ParameterizedCollectionTranslationMode is null or EntityFrameworkCore.Internal.ParameterizedCollectionTranslationMode.ParameterizeExpanded)
                     {
                         var parameterName = Uniquifier.Uniquify(valuesParameter.Name, ParameterValues, int.MaxValue);
                         ParameterValues.Add(parameterName, value);
@@ -154,9 +154,7 @@ public class SqlNullabilityProcessor : ExpressionVisitor
                     }
                 }
 
-                return processedValues is not []
-                    ? valuesExpression.Update(processedValues)
-                    : valuesExpression;
+                return valuesExpression.Update(processedValues);
             }
 
             default:
@@ -528,6 +526,7 @@ public class SqlNullabilityProcessor : ExpressionVisitor
             {
                 inExpression = inExpression.Update(
                     item, [.. rowValues.SelectMany(r => r.Values)]);
+                return VisitIn(inExpression, allowOptimizedExpansion, out nullable);
             }
             else
             {
@@ -793,7 +792,7 @@ public class SqlNullabilityProcessor : ExpressionVisitor
                         hasNull = true;
                         continue;
                     }
-                    if (ParameterizedCollectionTranslationMode == EntityFrameworkCore.Internal.ParameterizedCollectionTranslationMode.ParameterizeExpanded)
+                    if (ParameterizedCollectionTranslationMode is null or EntityFrameworkCore.Internal.ParameterizedCollectionTranslationMode.ParameterizeExpanded)
                     {
                         var parameterName = Uniquifier.Uniquify(valuesParameter.Name, ParameterValues, int.MaxValue);
                         ParameterValues.Add(parameterName, value);
