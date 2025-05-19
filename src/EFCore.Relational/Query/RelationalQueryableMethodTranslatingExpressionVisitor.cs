@@ -298,7 +298,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         var tableAlias = _sqlAliasManager.GenerateTableAlias(sqlParameterExpression.Name.TrimStart('_'));
 
         if (queryParameter.ShouldBeConstantized
-            || (primitiveCollectionsBehavior == ParameterizedCollectionTranslationMode.Constantize
+            || (primitiveCollectionsBehavior is ParameterizedCollectionTranslationMode.Constantize
                 && !queryParameter.ShouldNotBeConstantized))
         {
             var valuesExpression = new ValuesExpression(
@@ -313,7 +313,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
                 sqlParameterExpression.IsNullable);
         }
 
-        if (primitiveCollectionsBehavior == ParameterizedCollectionTranslationMode.ParameterizeExpanded)
+        if (primitiveCollectionsBehavior is null or ParameterizedCollectionTranslationMode.ParameterizeExpanded)
         {
             var valuesExpression = new ValuesExpression(
                 tableAlias,
@@ -587,7 +587,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
             .ParameterizedCollectionTranslationMode;
         // Pattern-match Contains over ValuesExpression, translating to simplified 'item IN (1, 2, 3)' with constant elements.
         // Expanding parameters will happen in 2nd stage of query pipeline.
-        if (primitiveCollectionsBehavior != ParameterizedCollectionTranslationMode.ParameterizeExpanded
+        if (primitiveCollectionsBehavior is not (null or ParameterizedCollectionTranslationMode.ParameterizeExpanded)
             && TryExtractBareInlineCollectionValues(source, out var values, out var valuesParameter))
         {
             var inExpression = (values, valuesParameter) switch
