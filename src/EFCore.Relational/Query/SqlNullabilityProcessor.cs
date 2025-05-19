@@ -525,7 +525,14 @@ public class SqlNullabilityProcessor : ExpressionVisitor
             if (subquery is { Tables: [ValuesExpression { RowValues: { } rowValues }] })
             {
                 inExpression = inExpression.Update(
-                    item, [.. rowValues.SelectMany(r => r.Values)]);
+                    item,
+                    [.. rowValues
+                        // Remove explicit cast from RelationalTypeMappingPostprocessor.ApplyTypeMappingsOnValuesExpression.
+                        // For IN it is not needed.
+                        // When #30605 is done, this will not be needed.
+                        .Select(r => r.Values[0] is SqlUnaryExpression { OperatorType: ExpressionType.Convert } convert
+                            ? convert.Operand
+                            : r.Values[0])]);
                 return VisitIn(inExpression, allowOptimizedExpansion, out nullable);
             }
             else
