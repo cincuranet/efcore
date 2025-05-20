@@ -1909,8 +1909,9 @@ FROM "PrimitiveCollectionsEntity" AS "p"
     public override async Task Nested_contains_with_Lists_and_no_inferred_type_mapping(bool async)
     {
         await base.Nested_contains_with_Lists_and_no_inferred_type_mapping(async);
-AssertSql(
-    """
+
+        AssertSql(
+            """
 @ints1='1'
 @ints2='2'
 @ints3='3'
@@ -1924,8 +1925,6 @@ WHERE CASE
     WHEN "p"."Int" IN (@ints1, @ints2, @ints3) THEN 'one'
     ELSE 'two'
 END IN (@strings1, @strings2, @strings3)
-""")"
-)
 """);
     }
 
@@ -2027,8 +2026,9 @@ WHERE "p"."WrappedId" NOT IN (
     public override async Task Parameter_collection_of_structs_Contains_nullable_struct(bool async)
     {
         await base.Parameter_collection_of_structs_Contains_nullable_struct(async);
-AssertSql(
-    """
+
+        AssertSql(
+            """
 @values1='22'
 @values2='33'
 
@@ -2044,7 +2044,6 @@ WHERE "p"."NullableWrappedIdWithNullableComparer" IN (@values1, @values2)
 SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
 FROM "PrimitiveCollectionsEntity" AS "p"
 WHERE "p"."NullableWrappedId" NOT IN (@values1, @values2) OR "p"."NullableWrappedId" IS NULL
-""")NULL
 """);
     }
 
