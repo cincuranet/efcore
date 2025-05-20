@@ -441,14 +441,13 @@ WHERE (
 
         AssertSql(
             """
-@p='[2,999,1000]' (Size = 12)
+@p1='2'
+@p2='999'
+@p3='1000'
 
 SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
 FROM "PrimitiveCollectionsEntity" AS "p"
-WHERE "p"."Id" IN (
-    SELECT "p0"."value"
-    FROM json_each(@p) AS "p0"
-)
+WHERE "p"."Id" IN (@p1, @p2, @p3)
 """);
     }
 
@@ -457,15 +456,17 @@ WHERE "p"."Id" IN (
         await base.Inline_collection_Count_with_column_predicate_with_EF_Parameter(async);
 
         AssertSql(
-            """
-@p='[2,999,1000]' (Size = 12)
+    """
+@p1='2'
+@p2='999'
+@p3='1000'
 
 SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
 FROM "PrimitiveCollectionsEntity" AS "p"
 WHERE (
     SELECT COUNT(*)
-    FROM json_each(@p) AS "p0"
-    WHERE "p0"."value" > "p"."Id") = 2
+    FROM (SELECT @p1 AS "Value" UNION ALL VALUES (@p2), (@p3)) AS "p0"
+    WHERE "p0"."Value" > "p"."Id") = 2
 """);
     }
 
@@ -475,14 +476,15 @@ WHERE (
 
         AssertSql(
             """
-@ids='[2,999]' (Size = 7)
+@ids1='2'
+@ids2='999'
 
 SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
 FROM "PrimitiveCollectionsEntity" AS "p"
 WHERE (
     SELECT COUNT(*)
-    FROM json_each(@ids) AS "i"
-    WHERE "i"."value" > "p"."Id") = 1
+    FROM (SELECT @ids1 AS "Value" UNION ALL VALUES (@ids2)) AS "i"
+    WHERE "i"."Value" > "p"."Id") = 1
 """);
     }
 
@@ -832,10 +834,7 @@ WHERE "p"."Bool" IN (
             """
 SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
 FROM "PrimitiveCollectionsEntity" AS "p"
-WHERE "p"."Int" IN (
-    SELECT "i"."value"
-    FROM json_each(NULL) AS "i"
-)
+WHERE 0
 """);
     }
 
@@ -844,10 +843,14 @@ WHERE "p"."Int" IN (
         await base.Parameter_collection_Contains_with_EF_Constant(async);
 
         AssertSql(
-            """
+    """
+@ids1='2'
+@ids2='999'
+@ids3='1000'
+
 SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
 FROM "PrimitiveCollectionsEntity" AS "p"
-WHERE "p"."Id" IN (2, 999, 1000)
+WHERE "p"."Id" IN (@ids1, @ids2, @ids3)
 """);
     }
 
@@ -872,11 +875,15 @@ WHERE EXISTS (
 
         AssertSql(
             """
+@ids1='2'
+@ids2='999'
+@ids3='1000'
+
 SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
 FROM "PrimitiveCollectionsEntity" AS "p"
 WHERE (
     SELECT COUNT(*)
-    FROM (SELECT 2 AS "Value" UNION ALL VALUES (999), (1000)) AS "i"
+    FROM (SELECT @ids1 AS "Value" UNION ALL VALUES (@ids2), (@ids3)) AS "i"
     WHERE "i"."Value" > "p"."Id") = 2
 """);
     }

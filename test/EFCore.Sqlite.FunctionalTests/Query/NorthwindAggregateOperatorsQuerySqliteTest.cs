@@ -132,13 +132,11 @@ FROM (
 
         AssertSql(
             """
-@cities='["London","Berlin"]' (Size = 19)
+@cities1='London' (Size = 6)
+@cities2='Berlin' (Size = 6)
 
 SELECT COUNT(CASE
-    WHEN "c"."City" IN (
-        SELECT "c0"."value"
-        FROM json_each(@cities) AS "c0"
-    ) THEN 1
+    WHEN "c"."City" IN (@cities1, @cities2) THEN 1
 END)
 FROM "Customers" AS "c"
 GROUP BY "c"."Country"
@@ -189,14 +187,12 @@ FROM "Customers" AS "c"
 
         AssertSql(
             """
-@cities='["London","Berlin"]' (Size = 19)
+@cities1='London' (Size = 6)
+@cities2='Berlin' (Size = 6)
 
 SELECT COUNT(*)
 FROM "Customers" AS "c"
-WHERE "c"."City" IN (
-    SELECT "c0"."value"
-    FROM json_each(@cities) AS "c0"
-)
+WHERE "c"."City" IN (@cities1, @cities2)
 """);
     }
 
