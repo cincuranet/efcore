@@ -4198,15 +4198,17 @@ FROM "Tags" AS "t"
 """,
             //
             """
-@tags='["34C8D86E-A4AC-4BE5-827F-584DDA348A07","70534E05-782C-4052-8720-C2C54481CE5F","A7BE028A-0CF2-448F-AB55-CE8BC5D8CF69","A8AD98F9-E023-4E2A-9A70-C2728455BD34","B39A6FBA-9026-4D69-828E-FD7068673E57","DF36F493-463F-4123-83F9-6B135DEEB7BA"]' (Size = 235)
+@tags1='34c8d86e-a4ac-4be5-827f-584dda348a07'
+@tags2='70534e05-782c-4052-8720-c2c54481ce5f'
+@tags3='a7be028a-0cf2-448f-ab55-ce8bc5d8cf69'
+@tags4='a8ad98f9-e023-4e2a-9a70-c2728455bd34'
+@tags5='b39a6fba-9026-4d69-828e-fd7068673e57'
+@tags6='df36f493-463f-4123-83f9-6b135deeb7ba'
 
 SELECT "g"."Nickname", "g"."SquadId", "g"."AssignedCityName", "g"."CityOfBirthName", "g"."Discriminator", "g"."FullName", "g"."HasSoulPatch", "g"."LeaderNickname", "g"."LeaderSquadId", "g"."Rank", "t"."Id", "t"."GearNickName", "t"."GearSquadId", "t"."IssueDate", "t"."Note"
 FROM "Gears" AS "g"
 LEFT JOIN "Tags" AS "t" ON "g"."Nickname" = "t"."GearNickName" AND "g"."SquadId" = "t"."GearSquadId"
-WHERE "t"."Id" IS NOT NULL AND "t"."Id" IN (
-    SELECT "t0"."value"
-    FROM json_each(@tags) AS "t0"
-)
+WHERE "t"."Id" IS NOT NULL AND "t"."Id" IN (@tags1, @tags2, @tags3, @tags4, @tags5, @tags6)
 """);
     }
 
@@ -8689,7 +8691,8 @@ GROUP BY "s"."Name"
 
         AssertSql(
             """
-@numbers='[1,-1]' (Size = 6)
+@numbers1='1'
+@numbers2='-1'
 
 SELECT "g"."Nickname", "g"."SquadId", "g"."AssignedCityName", "g"."CityOfBirthName", "g"."Discriminator", "g"."FullName", "g"."HasSoulPatch", "g"."LeaderNickname", "g"."LeaderSquadId", "g"."Rank"
 FROM "Gears" AS "g"
@@ -8699,10 +8702,7 @@ WHERE CASE
         FROM "Weapons" AS "w"
         WHERE "g"."FullName" = "w"."OwnerFullName") THEN 1
     ELSE 0
-END IN (
-    SELECT "n"."value"
-    FROM json_each(@numbers) AS "n"
-)
+END IN (@numbers1, @numbers2)
 """);
     }
 
