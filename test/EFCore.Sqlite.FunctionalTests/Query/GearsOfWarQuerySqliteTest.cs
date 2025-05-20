@@ -3870,14 +3870,12 @@ END = 1
 
         AssertSql(
             """
-@values='[false,true]' (Size = 12)
+@values1='False'
+@values2='True'
 
 SELECT "g"."Nickname", "g"."SquadId", "g"."AssignedCityName", "g"."CityOfBirthName", "g"."Discriminator", "g"."FullName", "g"."HasSoulPatch", "g"."LeaderNickname", "g"."LeaderSquadId", "g"."Rank"
 FROM "Gears" AS "g"
-WHERE "g"."HasSoulPatch" AND "g"."HasSoulPatch" IN (
-    SELECT "v"."value"
-    FROM json_each(@values) AS "v"
-)
+WHERE "g"."HasSoulPatch" AND "g"."HasSoulPatch" IN (@values1, @values2)
 """);
     }
 
@@ -4842,14 +4840,8 @@ ORDER BY "t"."Id", "g"."Nickname", "g"."SquadId", "g0"."Nickname"
 
         AssertSql(
             """
-@ids='[]' (Size = 2)
-
 SELECT "g"."Nickname", "g"."SquadId", "g"."AssignedCityName", "g"."CityOfBirthName", "g"."Discriminator", "g"."FullName", "g"."HasSoulPatch", "g"."LeaderNickname", "g"."LeaderSquadId", "g"."Rank"
 FROM "Gears" AS "g"
-ORDER BY "g"."SquadId" IN (
-    SELECT "i"."value"
-    FROM json_each(@ids) AS "i"
-)
 """);
     }
 
@@ -7129,14 +7121,13 @@ ORDER BY "g"."FullName"
 
         AssertSql(
             """
-@ids='["DF36F493-463F-4123-83F9-6B135DEEB7BA","23CBCF9B-CE14-45CF-AAFA-2C2667EBFDD3","AB1B82D7-88DB-42BD-A132-7EEF9AA68AF4"]' (Size = 118)
+@ids1='df36f493-463f-4123-83f9-6b135deeb7ba'
+@ids2='23cbcf9b-ce14-45cf-aafa-2c2667ebfdd3'
+@ids3='ab1b82d7-88db-42bd-a132-7eef9aa68af4'
 
 SELECT "t"."Id", "t"."GearNickName", "t"."GearSquadId", "t"."IssueDate", "t"."Note"
 FROM "Tags" AS "t"
-WHERE "t"."Id" IN (
-    SELECT "i"."value"
-    FROM json_each(@ids) AS "i"
-)
+WHERE "t"."Id" IN (@ids1, @ids2, @ids3)
 """);
     }
 

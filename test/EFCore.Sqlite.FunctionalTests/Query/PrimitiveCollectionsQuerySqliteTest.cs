@@ -542,25 +542,21 @@ WHERE "p"."Int" NOT IN (@ints1, @ints2)
 
         AssertSql(
             """
-@ints='[10,999]' (Nullable = false) (Size = 8)
+@ints1='10'
+@ints2='999'
 
 SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
 FROM "PrimitiveCollectionsEntity" AS "p"
-WHERE "p"."Int" IN (
-    SELECT "i"."value"
-    FROM json_each(@ints) AS "i"
-)
+WHERE "p"."Int" IN (@ints1, @ints2)
 """,
             //
             """
-@ints='[10,999]' (Nullable = false) (Size = 8)
+@ints1='10'
+@ints2='999'
 
 SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
 FROM "PrimitiveCollectionsEntity" AS "p"
-WHERE "p"."Int" NOT IN (
-    SELECT "i"."value"
-    FROM json_each(@ints) AS "i"
-)
+WHERE "p"."Int" NOT IN (@ints1, @ints2)
 """);
     }
 
@@ -570,25 +566,21 @@ WHERE "p"."Int" NOT IN (
 
         AssertSql(
             """
-@ints='[10,999]' (Size = 8)
+@ints1='10'
+@ints2='999'
 
 SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
 FROM "PrimitiveCollectionsEntity" AS "p"
-WHERE "p"."NullableInt" IN (
-    SELECT "i"."value"
-    FROM json_each(@ints) AS "i"
-)
+WHERE "p"."NullableInt" IN (@ints1, @ints2)
 """,
             //
             """
-@ints='[10,999]' (Size = 8)
+@ints1='10'
+@ints2='999'
 
 SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
 FROM "PrimitiveCollectionsEntity" AS "p"
-WHERE "p"."NullableInt" NOT IN (
-    SELECT "i"."value"
-    FROM json_each(@ints) AS "i"
-) OR "p"."NullableInt" IS NULL
+WHERE "p"."NullableInt" NOT IN (@ints1, @ints2) OR "p"."NullableInt" IS NULL
 """);
     }
 
@@ -827,11 +819,15 @@ WHERE "p"."Id" IN (@ids1, @ids2, @ids3)
 
         AssertSql(
             """
+@ids1='2'
+@ids2='999'
+@ids3='1000'
+
 SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
 FROM "PrimitiveCollectionsEntity" AS "p"
 WHERE EXISTS (
     SELECT 1
-    FROM (SELECT 2 AS "Value" UNION ALL VALUES (999), (1000)) AS "i"
+    FROM (SELECT @ids1 AS "Value" UNION ALL VALUES (@ids2), (@ids3)) AS "i"
     WHERE "i"."Value" > 0)
 """);
     }
@@ -1490,7 +1486,8 @@ WHERE (
 
         AssertSql(
             """
-@ints='[11,111]' (Size = 8)
+@ints1='11'
+@ints2='111'
 
 SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
 FROM "PrimitiveCollectionsEntity" AS "p"
@@ -1498,7 +1495,7 @@ WHERE (
     SELECT COUNT(*)
     FROM (
         SELECT 1
-        FROM json_each(@ints) AS "i"
+        FROM (SELECT @ints1 AS "Value" UNION ALL VALUES (@ints2)) AS "i"
         UNION ALL
         SELECT 1
         FROM json_each("p"."Ints") AS "i0"
@@ -1734,17 +1731,16 @@ WHERE (
 
         AssertSql(
             """
-@Skip='[111]' (Size = 5)
+@Skip1='111'
 
 SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
 FROM "PrimitiveCollectionsEntity" AS "p"
 WHERE (
     SELECT COUNT(*)
     FROM (
-        SELECT "s"."value"
-        FROM json_each(@Skip) AS "s"
+        SELECT @Skip1 AS "Value"
         UNION
-        SELECT "i2"."value"
+        SELECT "i2"."value" AS "Value"
         FROM (
             SELECT "i1"."value"
             FROM (
@@ -2034,10 +2030,10 @@ WHERE "p"."WrappedId" NOT IN (
 
 SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
 FROM "PrimitiveCollectionsEntity" AS "p"
-WHERE "p"."NullableWrappedIdWithNullableComparer" IN (@values1, @values2)
+WHERE "p"."NullableWrappedId" IN (@values1, @values2)
 """,
-    //
-    """
+            //
+            """
 @values1='11'
 @values2='44'
 
@@ -2053,25 +2049,21 @@ WHERE "p"."NullableWrappedId" NOT IN (@values1, @values2) OR "p"."NullableWrappe
 
         AssertSql(
             """
-@values='[22,33]' (Size = 7)
+@values1='22'
+@values2='33'
 
 SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
 FROM "PrimitiveCollectionsEntity" AS "p"
-WHERE "p"."NullableWrappedIdWithNullableComparer" IN (
-    SELECT "v"."value"
-    FROM json_each(@values) AS "v"
-)
+WHERE "p"."NullableWrappedIdWithNullableComparer" IN (@values1, @values2)
 """,
             //
             """
-@values='[11,44]' (Size = 7)
+@values1='11'
+@values2='44'
 
 SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
 FROM "PrimitiveCollectionsEntity" AS "p"
-WHERE "p"."NullableWrappedId" NOT IN (
-    SELECT "v"."value"
-    FROM json_each(@values) AS "v"
-) OR "p"."NullableWrappedId" IS NULL
+WHERE "p"."NullableWrappedId" NOT IN (@values1, @values2) OR "p"."NullableWrappedId" IS NULL
 """);
     }
 
