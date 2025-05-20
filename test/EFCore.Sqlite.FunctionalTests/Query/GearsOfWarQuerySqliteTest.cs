@@ -2189,15 +2189,12 @@ ORDER BY (
 
         AssertSql(
             """
-@cities_without_nulls='["Ephyra"]' (Size = 10)
+@cities1='Ephyra' (Size = 6)
 
 SELECT "g"."Nickname", "g"."SquadId", "g"."AssignedCityName", "g"."CityOfBirthName", "g"."Discriminator", "g"."FullName", "g"."HasSoulPatch", "g"."LeaderNickname", "g"."LeaderSquadId", "g"."Rank"
 FROM "Gears" AS "g"
 LEFT JOIN "Cities" AS "c" ON "g"."AssignedCityName" = "c"."Name"
-WHERE "g"."SquadId" < 2 AND ("c"."Name" IN (
-    SELECT "c0"."value"
-    FROM json_each(@cities_without_nulls) AS "c0"
-) OR "c"."Name" IS NULL)
+WHERE "g"."SquadId" < 2 AND ("c"."Name" IS NULL OR "c"."Name" = @cities1)
 """);
     }
 
@@ -3128,15 +3125,17 @@ FROM "Tags" AS "t"
 """,
             //
             """
-@tags='["34C8D86E-A4AC-4BE5-827F-584DDA348A07","70534E05-782C-4052-8720-C2C54481CE5F","A7BE028A-0CF2-448F-AB55-CE8BC5D8CF69","A8AD98F9-E023-4E2A-9A70-C2728455BD34","B39A6FBA-9026-4D69-828E-FD7068673E57","DF36F493-463F-4123-83F9-6B135DEEB7BA"]' (Size = 235)
+@tags1='34c8d86e-a4ac-4be5-827f-584dda348a07'
+@tags2='70534e05-782c-4052-8720-c2c54481ce5f'
+@tags3='a7be028a-0cf2-448f-ab55-ce8bc5d8cf69'
+@tags4='a8ad98f9-e023-4e2a-9a70-c2728455bd34'
+@tags5='b39a6fba-9026-4d69-828e-fd7068673e57'
+@tags6='df36f493-463f-4123-83f9-6b135deeb7ba'
 
 SELECT "g"."Nickname", "g"."SquadId", "g"."AssignedCityName", "g"."CityOfBirthName", "g"."Discriminator", "g"."FullName", "g"."HasSoulPatch", "g"."LeaderNickname", "g"."LeaderSquadId", "g"."Rank"
 FROM "Gears" AS "g"
 LEFT JOIN "Tags" AS "t" ON "g"."Nickname" = "t"."GearNickName" AND "g"."SquadId" = "t"."GearSquadId"
-WHERE "t"."Id" IS NOT NULL AND "t"."Id" IN (
-    SELECT "t0"."value"
-    FROM json_each(@tags) AS "t0"
-)
+WHERE "t"."Id" IS NOT NULL AND "t"."Id" IN (@tags1, @tags2, @tags3, @tags4, @tags5, @tags6)
 """);
     }
 
@@ -8722,7 +8721,7 @@ END IN (
 
         AssertSql(
             """
-@weapons='["Marcus\u0027 Lancer","Dom\u0027s Gnasher"]' (Size = 44)
+@weapons1='Marcus' Lancer' (Size = 14), @weapons2='Dom's Gnasher' (Size = 13)
 
 SELECT "g"."Nickname", "g"."SquadId", "g"."AssignedCityName", "g"."CityOfBirthName", "g"."Discriminator", "g"."FullName", "g"."HasSoulPatch", "g"."LeaderNickname", "g"."LeaderSquadId", "g"."Rank"
 FROM "Gears" AS "g"
@@ -8731,10 +8730,7 @@ WHERE (
     FROM "Weapons" AS "w0"
     WHERE "g"."FullName" = "w0"."OwnerFullName"
     ORDER BY "w0"."Id"
-    LIMIT 1) IN (
-    SELECT "w"."value"
-    FROM json_each(@weapons) AS "w"
-)
+    LIMIT 1) IN (@weapons1, @weapons2)
 """);
     }
 
@@ -8908,41 +8904,31 @@ LEFT JOIN "LocustHighCommands" AS "l0" ON "l"."HighCommandId" = "l0"."Id"
 
         AssertSql(
             """
-@ranks='[1]' (Size = 3)
+@ranks1='1'
 @key='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
-@keys='["0A47BCB7-A1CB-4345-8944-C58F82D6AAC7","5F221FB9-66F4-442A-92C9-D97ED5989CC7"]' (Size = 79)
+@keys1='0a47bcb7-a1cb-4345-8944-c58f82d6aac7'
+@keys2='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
 
 SELECT "g"."Nickname", "g"."SquadId", "g"."AssignedCityName", "g"."CityOfBirthName", "g"."Discriminator", "g"."FullName", "g"."HasSoulPatch", "g"."LeaderNickname", "g"."LeaderSquadId", "g"."Rank"
 FROM "Gears" AS "g"
 WHERE CASE
-    WHEN "g"."Rank" IN (
-        SELECT "r"."value"
-        FROM json_each(@ranks) AS "r"
-    ) THEN @key
+    WHEN "g"."Rank" = @ranks1 THEN @key
     ELSE @key
-END IN (
-    SELECT "k"."value"
-    FROM json_each(@keys) AS "k"
-)
+END IN (@keys1, @keys2)
 """,
             //
             """
-@ammoTypes='[1]' (Size = 3)
+@ammoTypes1='1'
 @key='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
-@keys='["0A47BCB7-A1CB-4345-8944-C58F82D6AAC7","5F221FB9-66F4-442A-92C9-D97ED5989CC7"]' (Size = 79)
+@keys1='0a47bcb7-a1cb-4345-8944-c58f82d6aac7'
+@keys2='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
 
 SELECT "w"."Id", "w"."AmmunitionType", "w"."IsAutomatic", "w"."Name", "w"."OwnerFullName", "w"."SynergyWithId"
 FROM "Weapons" AS "w"
 WHERE CASE
-    WHEN "w"."AmmunitionType" IN (
-        SELECT "a"."value"
-        FROM json_each(@ammoTypes) AS "a"
-    ) THEN @key
+    WHEN "w"."AmmunitionType" = @ammoTypes1 THEN @key
     ELSE @key
-END IN (
-    SELECT "k"."value"
-    FROM json_each(@keys) AS "k"
-)
+END IN (@keys1, @keys2)
 """);
     }
 
