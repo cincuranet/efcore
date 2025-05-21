@@ -130,6 +130,9 @@ public class SqlNullabilityProcessor : ExpressionVisitor
                 var typeMapping = (RelationalTypeMapping)valuesParameter.TypeMapping.ElementTypeMapping;
                 var values = (IEnumerable?)ParameterValues[valuesParameter.Name] ?? Array.Empty<object>();
 
+                var intTypeMapping = Dependencies.TypeMappingSource.FindMapping(typeof(int));
+                var cnt = 1;
+
                 var processedValues = new List<RowValueExpression>();
 
                 foreach (var value in values)
@@ -139,7 +142,15 @@ public class SqlNullabilityProcessor : ExpressionVisitor
                         var parameterName = Uniquifier.Uniquify(valuesParameter.Name, ParameterValues, int.MaxValue);
                         ParameterValues.Add(parameterName, value);
                         processedValues.Add(
-                            new RowValueExpression(
+                            // If we still have _ord column here (it was not removed by other optimizations),
+                            // we need to add value for it.
+                            valuesExpression.ColumnNames[0] == RelationalQueryableMethodTranslatingExpressionVisitor.ValuesOrderingColumnName
+                            ? new RowValueExpression(
+                                [
+                                    _sqlExpressionFactory.Constant(cnt++, intTypeMapping),
+                                    new SqlParameterExpression(parameterName, value?.GetType() ?? typeof(object), typeMapping)
+                                ])
+                            : new RowValueExpression(
                                 [
                                     new SqlParameterExpression(parameterName, value?.GetType() ?? typeof(object), typeMapping)
                                 ]));
