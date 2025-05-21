@@ -8731,7 +8731,9 @@ WHERE (
 
         AssertSql(
             """
-@numbers='[0,1,2]' (Size = 7)
+@numbers1='0'
+@numbers2='1'
+@numbers3='2'
 
 SELECT "g"."Nickname", "g"."SquadId", "w1"."Id", "w1"."AmmunitionType", "w1"."IsAutomatic", "w1"."Name", "w1"."OwnerFullName", "w1"."SynergyWithId"
 FROM "Gears" AS "g"
@@ -8742,9 +8744,9 @@ LEFT JOIN (
         FROM "Weapons" AS "w"
     ) AS "w0"
     WHERE "w0"."row" <= COALESCE((
-        SELECT "n"."value"
-        FROM json_each(@numbers) AS "n"
-        ORDER BY "n"."value"
+        SELECT "n"."Value"
+        FROM (SELECT 1 AS "_ord", @numbers1 AS "Value" UNION ALL VALUES (2, @numbers2), (3, @numbers3)) AS "n"
+        ORDER BY "n"."Value"
         LIMIT 1 OFFSET 1), 0)
 ) AS "w1" ON "g"."FullName" = "w1"."OwnerFullName"
 ORDER BY "g"."Nickname", "g"."SquadId", "w1"."OwnerFullName", "w1"."Id"

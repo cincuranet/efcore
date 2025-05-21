@@ -1654,19 +1654,20 @@ WHERE "p"."Ints" = '[1,10]'
 
         AssertSql(
             """
-@ints='[10,111]' (Size = 8)
+@ints1='10'
+@ints2='111'
 
 SELECT COUNT(*)
 FROM "PrimitiveCollectionsEntity" AS "p"
 WHERE (
     SELECT COUNT(*)
     FROM (
-        SELECT "i"."value" AS "value0"
-        FROM json_each(@ints) AS "i"
-        ORDER BY "i"."key"
+        SELECT "i"."Value" AS "Value0"
+        FROM (SELECT 1 AS "_ord", @ints1 AS "Value" UNION ALL VALUES (2, @ints2)) AS "i"
+        ORDER BY "i"."_ord"
         LIMIT -1 OFFSET 1
     ) AS "i0"
-    WHERE "i0"."value0" > "p"."Id") = 1
+    WHERE "i0"."Value0" > "p"."Id") = 1
 """);
     }
 
