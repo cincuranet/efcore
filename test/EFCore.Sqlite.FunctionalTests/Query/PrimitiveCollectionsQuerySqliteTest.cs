@@ -1684,22 +1684,23 @@ WHERE (
 
         AssertSql(
             """
-@ints='[10,111]' (Size = 8)
+@ints1='10'
+@ints2='111'
 
 SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
 FROM "PrimitiveCollectionsEntity" AS "p"
 WHERE (
     SELECT COUNT(*)
     FROM (
-        SELECT "i1"."value"
+        SELECT "i1"."Value"
         FROM (
-            SELECT "i"."value"
-            FROM json_each(@ints) AS "i"
-            ORDER BY "i"."key"
+            SELECT "i"."Value"
+            FROM (SELECT 1 AS "_ord", @ints1 AS "Value" UNION ALL VALUES (2, @ints2)) AS "i"
+            ORDER BY "i"."_ord"
             LIMIT -1 OFFSET 1
         ) AS "i1"
         UNION
-        SELECT "i0"."value"
+        SELECT "i0"."value" AS "Value"
         FROM json_each("p"."Ints") AS "i0"
     ) AS "u") = 3
 """);
