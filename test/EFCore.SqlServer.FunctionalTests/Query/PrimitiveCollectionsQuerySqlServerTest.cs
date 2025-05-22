@@ -1178,8 +1178,6 @@ WHERE (
 
         AssertSql(
             """
-AssertSql(
-    """
 @ints1='1'
 @ints2='2'
 @ints3='3'
