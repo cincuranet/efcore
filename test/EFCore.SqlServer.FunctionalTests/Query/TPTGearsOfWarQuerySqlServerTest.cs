@@ -2067,14 +2067,12 @@ WHERE [c].[Location] = @value
 
         AssertSql(
             """
-@cities='["Unknown","Jacinto\u0027s location","Ephyra\u0027s location"]' (Size = 4000)
+@cities1='Unknown' (Size = 100) (DbType = AnsiString)
+@cities2='Jacinto's location' (Size = 100) (DbType = AnsiString), @cities3='Ephyra's location' (Size = 100) (DbType = AnsiString)
 
 SELECT [c].[Name], [c].[Location], [c].[Nation]
 FROM [Cities] AS [c]
-WHERE [c].[Location] IN (
-    SELECT [c0].[value]
-    FROM OPENJSON(@cities) WITH ([value] varchar(100) '$') AS [c0]
-)
+WHERE [c].[Location] IN (@cities1, @cities2, @cities3)
 """);
     }
 
@@ -6245,18 +6243,10 @@ ORDER BY [c].[Name], [s].[Nickname] DESC
 
         AssertSql(
             """
-@nicknames='[]' (Size = 4000)
-
 SELECT [g].[Nickname], [g].[SquadId], [w].[Name], [w].[Id]
 FROM [Gears] AS [g]
 LEFT JOIN [Weapons] AS [w] ON [g].[FullName] = [w].[OwnerFullName]
-ORDER BY CASE
-    WHEN [g].[Nickname] IN (
-        SELECT [n].[value]
-        FROM OPENJSON(@nicknames) WITH ([value] nvarchar(450) '$') AS [n]
-    ) THEN CAST(1 AS bit)
-    ELSE CAST(0 AS bit)
-END DESC, [g].[Nickname], [g].[SquadId]
+ORDER BY [g].[Nickname], [g].[SquadId]
 """);
     }
 
@@ -9185,17 +9175,15 @@ WHERE [g].[HasSoulPatch] = CAST(1 AS bit) AND [g].[HasSoulPatch] IN (@values1, @
 
         AssertSql(
             """
-@values='[false,true]' (Size = 4000)
+@values1='False'
+@values2='True'
 
 SELECT [g].[Nickname], [g].[SquadId], [g].[AssignedCityName], [g].[CityOfBirthName], [g].[FullName], [g].[HasSoulPatch], [g].[LeaderNickname], [g].[LeaderSquadId], [g].[Rank], CASE
     WHEN [o].[Nickname] IS NOT NULL THEN N'Officer'
 END AS [Discriminator]
 FROM [Gears] AS [g]
 LEFT JOIN [Officers] AS [o] ON [g].[Nickname] = [o].[Nickname] AND [g].[SquadId] = [o].[SquadId]
-WHERE [g].[HasSoulPatch] = CAST(1 AS bit) AND [g].[HasSoulPatch] IN (
-    SELECT [v].[value]
-    FROM OPENJSON(@values) WITH ([value] bit '$') AS [v]
-)
+WHERE [g].[HasSoulPatch] = CAST(1 AS bit) AND [g].[HasSoulPatch] IN (@values1, @values2)
 """);
     }
 
@@ -10386,7 +10374,7 @@ END IN (@numbers1, @numbers2)
 
         AssertSql(
             """
-@weapons='["Marcus\u0027 Lancer","Dom\u0027s Gnasher"]' (Size = 4000)
+@weapons1='Marcus' Lancer' (Size = 4000), @weapons2='Dom's Gnasher' (Size = 4000)
 
 SELECT [g].[Nickname], [g].[SquadId], [g].[AssignedCityName], [g].[CityOfBirthName], [g].[FullName], [g].[HasSoulPatch], [g].[LeaderNickname], [g].[LeaderSquadId], [g].[Rank], CASE
     WHEN [o].[Nickname] IS NOT NULL THEN N'Officer'
@@ -10397,10 +10385,7 @@ WHERE (
     SELECT TOP(1) [w0].[Name]
     FROM [Weapons] AS [w0]
     WHERE [g].[FullName] = [w0].[OwnerFullName]
-    ORDER BY [w0].[Id]) IN (
-    SELECT [w].[value]
-    FROM OPENJSON(@weapons) WITH ([value] nvarchar(max) '$') AS [w]
-)
+    ORDER BY [w0].[Id]) IN (@weapons1, @weapons2)
 """);
     }
 

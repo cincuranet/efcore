@@ -3434,14 +3434,13 @@ END
 
         AssertSql(
             """
-@ids='["df36f493-463f-4123-83f9-6b135deeb7ba","23cbcf9b-ce14-45cf-aafa-2c2667ebfdd3","ab1b82d7-88db-42bd-a132-7eef9aa68af4"]' (Size = 4000)
+@ids1='df36f493-463f-4123-83f9-6b135deeb7ba'
+@ids2='23cbcf9b-ce14-45cf-aafa-2c2667ebfdd3'
+@ids3='ab1b82d7-88db-42bd-a132-7eef9aa68af4'
 
 SELECT [t].[Id], [t].[GearNickName], [t].[GearSquadId], [t].[IssueDate], [t].[Note]
 FROM [Tags] AS [t]
-WHERE [t].[Id] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids) WITH ([value] uniqueidentifier '$') AS [i]
-)
+WHERE [t].[Id] IN (@ids1, @ids2, @ids3)
 """);
     }
 
@@ -9141,8 +9140,6 @@ ORDER BY [u].[Nickname]
 
         AssertSql(
             """
-@ids='[]' (Size = 4000)
-
 SELECT [u].[Nickname], [u].[SquadId], [u].[AssignedCityName], [u].[CityOfBirthName], [u].[FullName], [u].[HasSoulPatch], [u].[LeaderNickname], [u].[LeaderSquadId], [u].[Rank], [u].[Discriminator]
 FROM (
     SELECT [g].[Nickname], [g].[SquadId], [g].[AssignedCityName], [g].[CityOfBirthName], [g].[FullName], [g].[HasSoulPatch], [g].[LeaderNickname], [g].[LeaderSquadId], [g].[Rank], N'Gear' AS [Discriminator]
@@ -9151,12 +9148,6 @@ FROM (
     SELECT [o].[Nickname], [o].[SquadId], [o].[AssignedCityName], [o].[CityOfBirthName], [o].[FullName], [o].[HasSoulPatch], [o].[LeaderNickname], [o].[LeaderSquadId], [o].[Rank], N'Officer' AS [Discriminator]
     FROM [Officers] AS [o]
 ) AS [u]
-ORDER BY CASE
-    WHEN [u].[SquadId] IN (
-        SELECT [i].[value]
-        FROM OPENJSON(@ids) WITH ([value] int '$') AS [i]
-    ) THEN CAST(1 AS bit)
-    ELSE CAST(0 AS bit)
 END
 """);
     }
@@ -12205,7 +12196,8 @@ GROUP BY [s].[Name]
 
         AssertSql(
             """
-@numbers='[1,-1]' (Size = 4000)
+@numbers1='1'
+@numbers2='-1'
 
 SELECT [u].[Nickname], [u].[SquadId], [u].[AssignedCityName], [u].[CityOfBirthName], [u].[FullName], [u].[HasSoulPatch], [u].[LeaderNickname], [u].[LeaderSquadId], [u].[Rank], [u].[Discriminator]
 FROM (
@@ -12221,10 +12213,7 @@ WHERE CASE
         FROM [Weapons] AS [w]
         WHERE [u].[FullName] = [w].[OwnerFullName]) THEN 1
     ELSE 0
-END IN (
-    SELECT [n].[value]
-    FROM OPENJSON(@numbers) WITH ([value] int '$') AS [n]
-)
+END IN (@numbers1, @numbers2)
 """);
     }
 
@@ -12529,9 +12518,10 @@ LEFT JOIN [LocustHighCommands] AS [l1] ON [u].[HighCommandId] = [l1].[Id]
 
         AssertSql(
             """
-@ranks='[1]' (Size = 4000)
+@ranks1='1'
 @key='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
-@keys='["0a47bcb7-a1cb-4345-8944-c58f82d6aac7","5f221fb9-66f4-442a-92c9-d97ed5989cc7"]' (Size = 4000)
+@keys1='0a47bcb7-a1cb-4345-8944-c58f82d6aac7'
+@keys2='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
 
 SELECT [u].[Nickname], [u].[SquadId], [u].[AssignedCityName], [u].[CityOfBirthName], [u].[FullName], [u].[HasSoulPatch], [u].[LeaderNickname], [u].[LeaderSquadId], [u].[Rank], [u].[Discriminator]
 FROM (
@@ -12542,34 +12532,23 @@ FROM (
     FROM [Officers] AS [o]
 ) AS [u]
 WHERE CASE
-    WHEN [u].[Rank] IN (
-        SELECT [r].[value]
-        FROM OPENJSON(@ranks) WITH ([value] int '$') AS [r]
-    ) THEN @key
+    WHEN [u].[Rank] = @ranks1 THEN @key
     ELSE @key
-END IN (
-    SELECT [k].[value]
-    FROM OPENJSON(@keys) WITH ([value] uniqueidentifier '$') AS [k]
-)
+END IN (@keys1, @keys2)
 """,
             //
             """
-@ammoTypes='[1]' (Size = 4000)
+@ammoTypes1='1'
 @key='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
-@keys='["0a47bcb7-a1cb-4345-8944-c58f82d6aac7","5f221fb9-66f4-442a-92c9-d97ed5989cc7"]' (Size = 4000)
+@keys1='0a47bcb7-a1cb-4345-8944-c58f82d6aac7'
+@keys2='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
 
 SELECT [w].[Id], [w].[AmmunitionType], [w].[IsAutomatic], [w].[Name], [w].[OwnerFullName], [w].[SynergyWithId]
 FROM [Weapons] AS [w]
 WHERE CASE
-    WHEN [w].[AmmunitionType] IN (
-        SELECT [a].[value]
-        FROM OPENJSON(@ammoTypes) WITH ([value] int '$') AS [a]
-    ) THEN @key
+    WHEN [w].[AmmunitionType] = @ammoTypes1 THEN @key
     ELSE @key
-END IN (
-    SELECT [k].[value]
-    FROM OPENJSON(@keys) WITH ([value] uniqueidentifier '$') AS [k]
-)
+END IN (@keys1, @keys2)
 """);
     }
 

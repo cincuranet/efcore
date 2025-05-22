@@ -551,25 +551,21 @@ WHERE [p].[Int] NOT IN (@ints1, @ints2)
 
         AssertSql(
             """
-@ints='[10,999]' (Nullable = false) (Size = 4000)
+@ints1='10'
+@ints2='999'
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[Int] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ints) WITH ([value] int '$') AS [i]
-)
+WHERE [p].[Int] IN (@ints1, @ints2)
 """,
             //
             """
-@ints='[10,999]' (Nullable = false) (Size = 4000)
+@ints1='10'
+@ints2='999'
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[Int] NOT IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ints) WITH ([value] int '$') AS [i]
-)
+WHERE [p].[Int] NOT IN (@ints1, @ints2)
 """);
     }
 
@@ -579,25 +575,21 @@ WHERE [p].[Int] NOT IN (
 
         AssertSql(
             """
-@ints='[10,999]' (Size = 4000)
+@ints1='10'
+@ints2='999'
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[NullableInt] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ints) WITH ([value] int '$') AS [i]
-)
+WHERE [p].[NullableInt] IN (@ints1, @ints2)
 """,
             //
             """
-@ints='[10,999]' (Size = 4000)
+@ints1='10'
+@ints2='999'
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[NullableInt] NOT IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ints) WITH ([value] int '$') AS [i]
-) OR [p].[NullableInt] IS NULL
+WHERE [p].[NullableInt] NOT IN (@ints1, @ints2) OR [p].[NullableInt] IS NULL
 """);
     }
 
@@ -1600,7 +1592,8 @@ FROM [PrimitiveCollectionsEntity] AS [p]
 
         AssertSql(
             """
-@ints='[11,111]' (Size = 4000)
+@ints1='11'
+@ints2='111'
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
@@ -1610,8 +1603,8 @@ WHERE (
         SELECT [i].[value]
         FROM OPENJSON([p].[Ints]) WITH ([value] int '$') AS [i]
         UNION
-        SELECT [i0].[value]
-        FROM OPENJSON(@ints) WITH ([value] int '$') AS [i0]
+        SELECT [i0].[Value] AS [value]
+        FROM (VALUES (@ints1), (@ints2)) AS [i0]([Value])
     ) AS [u]) = 2
 """);
     }
@@ -1731,22 +1724,23 @@ WHERE [p].[Ints] = N'[1,10]'
 
         AssertSql(
             """
-@ints='[10,111]' (Size = 4000)
+@ints1='10'
+@ints2='111'
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
 WHERE (
     SELECT COUNT(*)
     FROM (
-        SELECT [i1].[value]
+        SELECT [i1].[Value]
         FROM (
-            SELECT CAST([i].[value] AS int) AS [value]
-            FROM OPENJSON(@ints) AS [i]
-            ORDER BY CAST([i].[key] AS int)
+            SELECT [i].[Value]
+            FROM (VALUES (1, @ints1), (2, @ints2)) AS [i]([_ord], [Value])
+            ORDER BY [i].[_ord]
             OFFSET 1 ROWS
         ) AS [i1]
         UNION
-        SELECT [i0].[value]
+        SELECT [i0].[value] AS [Value]
         FROM OPENJSON([p].[Ints]) WITH ([value] int '$') AS [i0]
     ) AS [u]) = 3
 """);
@@ -1758,17 +1752,17 @@ WHERE (
 
         AssertSql(
             """
-@Skip='[111]' (Size = 4000)
+@Skip1='111'
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
 WHERE (
     SELECT COUNT(*)
     FROM (
-        SELECT [s].[value]
-        FROM OPENJSON(@Skip) WITH ([value] int '$') AS [s]
+        SELECT [s].[Value]
+        FROM (VALUES (@Skip1)) AS [s]([Value])
         UNION
-        SELECT [i].[value]
+        SELECT [i].[value] AS [Value]
         FROM OPENJSON([p].[Ints]) WITH ([value] int '$') AS [i]
     ) AS [u]) = 3
 """);
@@ -2185,25 +2179,21 @@ WHERE [p].[WrappedId] NOT IN (
 
         AssertSql(
             """
-@values='[22,33]' (Size = 4000)
+@values1='22'
+@values2='33'
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[NullableWrappedId] IN (
-    SELECT [v].[value]
-    FROM OPENJSON(@values) WITH ([value] int '$') AS [v]
-)
+WHERE [p].[NullableWrappedId] IN (@values1, @values2)
 """,
             //
             """
-@values='[11,44]' (Size = 4000)
+@values1='11'
+@values2='44'
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[NullableWrappedId] NOT IN (
-    SELECT [v].[value]
-    FROM OPENJSON(@values) WITH ([value] int '$') AS [v]
-) OR [p].[NullableWrappedId] IS NULL
+WHERE [p].[NullableWrappedId] NOT IN (@values1, @values2) OR [p].[NullableWrappedId] IS NULL
 """);
     }
 
@@ -2213,25 +2203,21 @@ WHERE [p].[NullableWrappedId] NOT IN (
 
         AssertSql(
             """
-@values='[22,33]' (Size = 4000)
+@values1='22'
+@values2='33'
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[NullableWrappedIdWithNullableComparer] IN (
-    SELECT [v].[value]
-    FROM OPENJSON(@values) WITH ([value] int '$') AS [v]
-)
+WHERE [p].[NullableWrappedIdWithNullableComparer] IN (@values1, @values2)
 """,
             //
             """
-@values='[11,44]' (Size = 4000)
+@values1='11'
+@values2='44'
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[NullableWrappedId] NOT IN (
-    SELECT [v].[value]
-    FROM OPENJSON(@values) WITH ([value] int '$') AS [v]
-) OR [p].[NullableWrappedId] IS NULL
+WHERE [p].[NullableWrappedId] NOT IN (@values1, @values2) OR [p].[NullableWrappedId] IS NULL
 """);
     }
 

@@ -495,15 +495,21 @@ WHERE [p].[Int] NOT IN (@ints1, @ints2)
 
         AssertSql(
             """
+@ints1='10'
+@ints2='999'
+
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[Int] IN (10, 999)
+WHERE [p].[Int] IN (@ints1, @ints2)
 """,
             //
             """
+@ints1='10'
+@ints2='999'
+
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[Int] NOT IN (10, 999)
+WHERE [p].[Int] NOT IN (@ints1, @ints2)
 """);
     }
 
@@ -513,15 +519,21 @@ WHERE [p].[Int] NOT IN (10, 999)
 
         AssertSql(
             """
+@ints1='10'
+@ints2='999'
+
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[Int] IN (10, 999)
+WHERE [p].[Int] IN (@ints1, @ints2)
 """,
             //
             """
+@ints1='10'
+@ints2='999'
+
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[Int] NOT IN (10, 999)
+WHERE [p].[Int] NOT IN (@ints1, @ints2)
 """);
     }
 
@@ -660,15 +672,19 @@ WHERE [p].[NullableString] NOT IN (@strings1, @strings2) OR [p].[NullableString]
 
         AssertSql(
             """
+@strings1='999' (Size = 4000)
+
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[NullableString] IS NULL OR [p].[NullableString] = N'999'
+WHERE [p].[NullableString] IS NULL OR [p].[NullableString] = @strings1
 """,
             //
             """
+@strings1='999' (Size = 4000)
+
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[NullableString] IS NOT NULL AND [p].[NullableString] <> N'999'
+WHERE [p].[NullableString] IS NOT NULL AND [p].[NullableString] <> @strings1
 """);
     }
 
@@ -1194,12 +1210,19 @@ ORDER BY [p].[Id]
 
         AssertSql(
             """
+@ints1='1'
+@ints2='2'
+@ints3='3'
+@strings1='one' (Size = 4000)
+@strings2='two' (Size = 4000)
+@strings3='three' (Size = 4000)
+
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
 WHERE CASE
-    WHEN [p].[Int] IN (1, 2, 3) THEN N'one'
+    WHEN [p].[Int] IN (@ints1, @ints2, @ints3) THEN N'one'
     ELSE N'two'
-END IN (N'one', N'two', N'three')
+END IN (@strings1, @strings2, @strings3)
 """);
     }
 
@@ -1300,18 +1323,22 @@ WHERE [p].[WrappedId] NOT IN (11, 44)
     public override async Task Parameter_collection_of_nullable_structs_Contains_nullable_struct(bool async)
     {
         await base.Parameter_collection_of_nullable_structs_Contains_nullable_struct(async);
+@values2='22'
 
         AssertSql(
             """
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[NullableWrappedId] IS NULL OR [p].[NullableWrappedId] = 22
+WHERE [p].[WrappedId] = @values2
 """,
             //
             """
+@values1='11'
+@values2='44'
+
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[NullableWrappedId] NOT IN (11, 44) OR [p].[NullableWrappedId] IS NULL
+WHERE [p].[WrappedId] NOT IN (@values1, @values2)
 """);
     }
 

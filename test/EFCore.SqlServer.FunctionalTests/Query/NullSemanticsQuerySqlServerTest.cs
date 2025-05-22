@@ -2744,14 +2744,11 @@ WHERE [e].[NullableStringA] IS NULL OR [e].[NullableStringA] = @ids1
 
         AssertSql(
             """
-@ids_without_nulls='["Foo"]' (Size = 4000)
+@ids1='Foo' (Size = 4000)
 
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[NullableStringA] NOT IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids_without_nulls) AS [i]
-) AND [e].[NullableStringA] IS NOT NULL
+WHERE [e].[NullableStringA] IS NOT NULL AND [e].[NullableStringA] <> @ids1
 """);
     }
 

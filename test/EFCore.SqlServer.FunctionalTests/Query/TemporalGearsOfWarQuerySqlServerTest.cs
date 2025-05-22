@@ -111,15 +111,10 @@ FROM [Tags] AS [t]
 """,
             //
             """
-@tags='[]' (Size = 4000)
-
 SELECT [g].[Nickname], [g].[SquadId], [g].[AssignedCityName], [g].[CityOfBirthName], [g].[Discriminator], [g].[FullName], [g].[HasSoulPatch], [g].[LeaderNickname], [g].[LeaderSquadId], [g].[PeriodEnd], [g].[PeriodStart], [g].[Rank]
 FROM [Gears] AS [g]
 LEFT JOIN [Tags] AS [t] ON [g].[Nickname] = [t].[GearNickName] AND [g].[SquadId] = [t].[GearSquadId]
-WHERE [t].[Id] IS NOT NULL AND [t].[Id] IN (
-    SELECT [t0].[value]
-    FROM OPENJSON(@tags) WITH ([value] uniqueidentifier '$') AS [t0]
-)
+WHERE 0 = 1
 """);
     }
 
@@ -5477,17 +5472,8 @@ ORDER BY [g].[Nickname]
 
         AssertSql(
             """
-@ids='[]' (Size = 4000)
-
 SELECT [g].[Nickname], [g].[SquadId], [g].[AssignedCityName], [g].[CityOfBirthName], [g].[Discriminator], [g].[FullName], [g].[HasSoulPatch], [g].[LeaderNickname], [g].[LeaderSquadId], [g].[PeriodEnd], [g].[PeriodStart], [g].[Rank]
 FROM [Gears] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [g]
-ORDER BY CASE
-    WHEN [g].[SquadId] IN (
-        SELECT [i].[value]
-        FROM OPENJSON(@ids) WITH ([value] int '$') AS [i]
-    ) THEN CAST(1 AS bit)
-    ELSE CAST(0 AS bit)
-END
 """);
     }
 
