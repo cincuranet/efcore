@@ -630,25 +630,20 @@ ORDER BY [c].[CustomerID], [o].[OrderID]
 
         AssertSql(
             """
-@list='["ALFKI"]' (Size = 4000)
+@list1='ALFKI' (Size = 5) (DbType = StringFixedLength)
+@list2='ALFKI' (Size = 5) (DbType = StringFixedLength)
 @p='1'
 
 SELECT [c0].[CustomerID], [c0].[Address], [c0].[City], [c0].[CompanyName], [c0].[ContactName], [c0].[ContactTitle], [c0].[Country], [c0].[Fax], [c0].[Phone], [c0].[PostalCode], [c0].[Region], [o].[OrderID], [o].[CustomerID], [o].[EmployeeID], [o].[OrderDate]
 FROM (
     SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region], CASE
-        WHEN [c].[CustomerID] NOT IN (
-            SELECT [l].[value]
-            FROM OPENJSON(@list) WITH ([value] nchar(5) '$') AS [l]
-        ) THEN CAST(1 AS bit)
+        WHEN [c].[CustomerID] <> @list1 THEN CAST(1 AS bit)
         ELSE CAST(0 AS bit)
     END AS [c]
     FROM [Customers] AS [c]
     WHERE [c].[CustomerID] LIKE N'A%'
     ORDER BY CASE
-        WHEN [c].[CustomerID] NOT IN (
-            SELECT [l].[value]
-            FROM OPENJSON(@list) WITH ([value] nchar(5) '$') AS [l]
-        ) THEN CAST(1 AS bit)
+        WHEN [c].[CustomerID] <> @list2 THEN CAST(1 AS bit)
         ELSE CAST(0 AS bit)
     END
     OFFSET @p ROWS

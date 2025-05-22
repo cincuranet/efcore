@@ -1072,14 +1072,16 @@ WHERE [t].[DateTime] IN (@dateTimes1, @dateTimes2) AND [t].[DateTime2] IN (@date
 
         AssertSql(
             """
-@dateTimes='["2020-01-01T12:30:00","2020-01-02T12:30:00",null]' (Size = 4000)
+@dateTimes1='2020-01-01T12:30:00.0000000'
+@dateTimes2='2020-01-02T12:30:00.0000000'
+@dateTimes3=NULL (DbType = DateTime2)
 
 SELECT [t].[Id], [t].[DateTime], [t].[Ints]
 FROM [TestEntity] AS [t]
 WHERE EXISTS (
     SELECT 1
-    FROM OPENJSON(@dateTimes) WITH ([value] datetime2 '$') AS [d]
-    WHERE [d].[value] = [t].[DateTime] AND [d].[value] IS NOT NULL)
+    FROM (VALUES (@dateTimes1), (@dateTimes2), (@dateTimes3)) AS [d]([Value])
+    WHERE [d].[Value] = [t].[DateTime] AND [d].[Value] IS NOT NULL)
 """);
     }
 

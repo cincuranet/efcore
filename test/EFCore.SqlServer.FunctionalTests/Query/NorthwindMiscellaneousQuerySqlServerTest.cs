@@ -3829,25 +3829,20 @@ LEFT JOIN [Employees] AS [e0] ON [e].[EmployeeID] = [e0].[ReportsTo]
 
         AssertSql(
             """
-@dates='["1996-07-04T00:00:00","1996-07-16T00:00:00"]' (Size = 4000)
+@dates1='1996-07-04T00:00:00.0000000' (DbType = DateTime)
+@dates2='1996-07-16T00:00:00.0000000' (DbType = DateTime)
 
 SELECT [o].[OrderID], [o].[CustomerID], [o].[EmployeeID], [o].[OrderDate]
 FROM [Orders] AS [o]
-WHERE CONVERT(date, [o].[OrderDate]) IN (
-    SELECT [d].[value]
-    FROM OPENJSON(@dates) WITH ([value] datetime '$') AS [d]
-)
+WHERE CONVERT(date, [o].[OrderDate]) IN (@dates1, @dates2)
 """,
             //
             """
-@dates='["1996-07-04T00:00:00"]' (Size = 4000)
+@dates1='1996-07-04T00:00:00.0000000' (DbType = DateTime)
 
 SELECT [o].[OrderID], [o].[CustomerID], [o].[EmployeeID], [o].[OrderDate]
 FROM [Orders] AS [o]
-WHERE CONVERT(date, [o].[OrderDate]) IN (
-    SELECT [d].[value]
-    FROM OPENJSON(@dates) WITH ([value] datetime '$') AS [d]
-)
+WHERE CONVERT(date, [o].[OrderDate]) = @dates1
 """);
     }
 
@@ -7034,30 +7029,26 @@ WHERE (
 
         AssertSql(
             """
-@ids='[10248,10249]' (Size = 4000)
+@ids3='10248'
+@ids4='10249'
+@ids1='10248'
+@ids2='10249'
+@ids5='10248'
+@ids6='10249'
 
 SELECT [o].[Quantity] AS [Key], (
     SELECT MAX([o1].[OrderDate])
     FROM [Order Details] AS [o0]
     INNER JOIN [Orders] AS [o1] ON [o0].[OrderID] = [o1].[OrderID]
-    WHERE [o0].[OrderID] IN (
-        SELECT [i0].[value]
-        FROM OPENJSON(@ids) WITH ([value] int '$') AS [i0]
-    ) AND [o].[Quantity] = [o0].[Quantity]) AS [MaxTimestamp]
+    WHERE [o0].[OrderID] IN (@ids3, @ids4) AND [o].[Quantity] = [o0].[Quantity]) AS [MaxTimestamp]
 FROM [Order Details] AS [o]
-WHERE [o].[OrderID] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids) WITH ([value] int '$') AS [i]
-)
+WHERE [o].[OrderID] IN (@ids1, @ids2)
 GROUP BY [o].[Quantity]
 ORDER BY (
     SELECT MAX([o1].[OrderDate])
     FROM [Order Details] AS [o0]
     INNER JOIN [Orders] AS [o1] ON [o0].[OrderID] = [o1].[OrderID]
-    WHERE [o0].[OrderID] IN (
-        SELECT [i0].[value]
-        FROM OPENJSON(@ids) WITH ([value] int '$') AS [i0]
-    ) AND [o].[Quantity] = [o0].[Quantity])
+    WHERE [o0].[OrderID] IN (@ids5, @ids6) AND [o].[Quantity] = [o0].[Quantity])
 """);
     }
 
@@ -7120,14 +7111,13 @@ WHERE COALESCE([o].[CustomerID], N'') + COALESCE([c].[CustomerID], N'') IN (
         AssertSql(
             """
 @someVariable='SomeVariable' (Size = 4000)
-@data='["ALFKISomeVariable","ANATRSomeVariable","ALFKIX"]' (Size = 4000)
+@data1='ALFKISomeVariable' (Size = 4000)
+@data2='ANATRSomeVariable' (Size = 4000)
+@data3='ALFKIX' (Size = 4000)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] + @someVariable IN (
-    SELECT [d].[value]
-    FROM OPENJSON(@data) WITH ([value] nvarchar(max) '$') AS [d]
-)
+WHERE [c].[CustomerID] + @someVariable IN (@data1, @data2, @data3)
 """);
     }
 
