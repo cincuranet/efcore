@@ -1290,14 +1290,12 @@ ORDER BY [f].[Name]
 
         AssertSql(
             """
-@values='[false,true]' (Size = 4000)
+@values1='False'
+@values2='True'
 
 SELECT [g].[Nickname], [g].[SquadId], [g].[AssignedCityName], [g].[CityOfBirthName], [g].[Discriminator], [g].[FullName], [g].[HasSoulPatch], [g].[LeaderNickname], [g].[LeaderSquadId], [g].[PeriodEnd], [g].[PeriodStart], [g].[Rank]
 FROM [Gears] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [g]
-WHERE [g].[HasSoulPatch] = CAST(1 AS bit) AND [g].[HasSoulPatch] IN (
-    SELECT [v].[value]
-    FROM OPENJSON(@values) WITH ([value] bit '$') AS [v]
-)
+WHERE [g].[HasSoulPatch] = CAST(1 AS bit) AND [g].[HasSoulPatch] IN (@values1, @values2)
 """);
     }
 
@@ -5932,14 +5930,12 @@ WHERE [t].[Note] <> N'K.I.A.' OR [t].[Note] IS NULL
 
         AssertSql(
             """
-@cities='["Unknown","Jacinto\u0027s location","Ephyra\u0027s location"]' (Size = 4000)
+@cities1='Unknown' (Size = 100) (DbType = AnsiString)
+@cities2='Jacinto's location' (Size = 100) (DbType = AnsiString), @cities3='Ephyra's location' (Size = 100) (DbType = AnsiString)
 
 SELECT [c].[Name], [c].[Location], [c].[Nation], [c].[PeriodEnd], [c].[PeriodStart]
 FROM [Cities] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [c]
-WHERE [c].[Location] IN (
-    SELECT [c0].[value]
-    FROM OPENJSON(@cities) WITH ([value] varchar(100) '$') AS [c0]
-)
+WHERE [c].[Location] IN (@cities1, @cities2, @cities3)
 """);
     }
 
@@ -7452,14 +7448,13 @@ ORDER BY [g0].[Nickname], [g0].[SquadId]
 
         AssertSql(
             """
-@ids='["df36f493-463f-4123-83f9-6b135deeb7ba","23cbcf9b-ce14-45cf-aafa-2c2667ebfdd3","ab1b82d7-88db-42bd-a132-7eef9aa68af4"]' (Size = 4000)
+@ids1='df36f493-463f-4123-83f9-6b135deeb7ba'
+@ids2='23cbcf9b-ce14-45cf-aafa-2c2667ebfdd3'
+@ids3='ab1b82d7-88db-42bd-a132-7eef9aa68af4'
 
 SELECT [t].[Id], [t].[GearNickName], [t].[GearSquadId], [t].[IssueDate], [t].[Note], [t].[PeriodEnd], [t].[PeriodStart]
 FROM [Tags] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [t]
-WHERE [t].[Id] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids) WITH ([value] uniqueidentifier '$') AS [i]
-)
+WHERE [t].[Id] IN (@ids1, @ids2, @ids3)
 """);
     }
 
@@ -9055,7 +9050,8 @@ GROUP BY [s].[Name]
 
         AssertSql(
             """
-@numbers='[1,-1]' (Size = 4000)
+@numbers1='1'
+@numbers2='-1'
 
 SELECT [g].[Nickname], [g].[SquadId], [g].[AssignedCityName], [g].[CityOfBirthName], [g].[Discriminator], [g].[FullName], [g].[HasSoulPatch], [g].[LeaderNickname], [g].[LeaderSquadId], [g].[PeriodEnd], [g].[PeriodStart], [g].[Rank]
 FROM [Gears] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [g]
@@ -9065,10 +9061,7 @@ WHERE CASE
         FROM [Weapons] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [w]
         WHERE [g].[FullName] = [w].[OwnerFullName]) THEN 1
     ELSE 0
-END IN (
-    SELECT [n].[value]
-    FROM OPENJSON(@numbers) WITH ([value] int '$') AS [n]
-)
+END IN (@numbers1, @numbers2)
 """);
     }
 

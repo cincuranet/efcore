@@ -3081,15 +3081,12 @@ ORDER BY [g].[Nickname], [g1].[Nickname]
 
         AssertSql(
             """
-@cities_without_nulls='["Ephyra"]' (Size = 4000)
+@cities1='Ephyra' (Size = 450)
 
 SELECT [g].[Nickname], [g].[SquadId], [g].[AssignedCityName], [g].[CityOfBirthName], [g].[Discriminator], [g].[FullName], [g].[HasSoulPatch], [g].[LeaderNickname], [g].[LeaderSquadId], [g].[Rank]
 FROM [Gears] AS [g]
 LEFT JOIN [Cities] AS [c] ON [g].[AssignedCityName] = [c].[Name]
-WHERE [g].[SquadId] < 2 AND ([c].[Name] IN (
-    SELECT [c0].[value]
-    FROM OPENJSON(@cities_without_nulls) AS [c0]
-) OR [c].[Name] IS NULL)
+WHERE [g].[SquadId] < 2 AND ([c].[Name] IS NULL OR [c].[Name] = @cities1)
 """);
     }
 
@@ -9191,7 +9188,9 @@ WHERE (
 
         AssertSql(
             """
-@numbers='[0,1,2]' (Size = 4000)
+@numbers1='0'
+@numbers2='1'
+@numbers3='2'
 
 SELECT [g].[Nickname], [g].[SquadId], [w1].[Id], [w1].[AmmunitionType], [w1].[IsAutomatic], [w1].[Name], [w1].[OwnerFullName], [w1].[SynergyWithId]
 FROM [Gears] AS [g]
@@ -9202,9 +9201,9 @@ LEFT JOIN (
         FROM [Weapons] AS [w]
     ) AS [w0]
     WHERE [w0].[row] <= ISNULL((
-        SELECT [n].[value]
-        FROM OPENJSON(@numbers) WITH ([value] int '$') AS [n]
-        ORDER BY [n].[value]
+        SELECT [n].[Value]
+        FROM (VALUES (1, @numbers1), (2, @numbers2), (3, @numbers3)) AS [n]([_ord], [Value])
+        ORDER BY [n].[Value]
         OFFSET 1 ROWS FETCH NEXT 1 ROWS ONLY), 0)
 ) AS [w1] ON [g].[FullName] = [w1].[OwnerFullName]
 ORDER BY [g].[Nickname], [g].[SquadId], [w1].[OwnerFullName], [w1].[Id]
@@ -9367,41 +9366,31 @@ LEFT JOIN [LocustHighCommands] AS [l0] ON [l].[HighCommandId] = [l0].[Id]
 
         AssertSql(
             """
-@ranks='[1]' (Size = 4000)
+@ranks1='1'
 @key='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
-@keys='["0a47bcb7-a1cb-4345-8944-c58f82d6aac7","5f221fb9-66f4-442a-92c9-d97ed5989cc7"]' (Size = 4000)
+@keys1='0a47bcb7-a1cb-4345-8944-c58f82d6aac7'
+@keys2='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
 
 SELECT [g].[Nickname], [g].[SquadId], [g].[AssignedCityName], [g].[CityOfBirthName], [g].[Discriminator], [g].[FullName], [g].[HasSoulPatch], [g].[LeaderNickname], [g].[LeaderSquadId], [g].[Rank]
 FROM [Gears] AS [g]
 WHERE CASE
-    WHEN [g].[Rank] IN (
-        SELECT [r].[value]
-        FROM OPENJSON(@ranks) WITH ([value] int '$') AS [r]
-    ) THEN @key
+    WHEN [g].[Rank] = @ranks1 THEN @key
     ELSE @key
-END IN (
-    SELECT [k].[value]
-    FROM OPENJSON(@keys) WITH ([value] uniqueidentifier '$') AS [k]
-)
+END IN (@keys1, @keys2)
 """,
             //
             """
-@ammoTypes='[1]' (Size = 4000)
+@ammoTypes1='1'
 @key='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
-@keys='["0a47bcb7-a1cb-4345-8944-c58f82d6aac7","5f221fb9-66f4-442a-92c9-d97ed5989cc7"]' (Size = 4000)
+@keys1='0a47bcb7-a1cb-4345-8944-c58f82d6aac7'
+@keys2='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
 
 SELECT [w].[Id], [w].[AmmunitionType], [w].[IsAutomatic], [w].[Name], [w].[OwnerFullName], [w].[SynergyWithId]
 FROM [Weapons] AS [w]
 WHERE CASE
-    WHEN [w].[AmmunitionType] IN (
-        SELECT [a].[value]
-        FROM OPENJSON(@ammoTypes) WITH ([value] int '$') AS [a]
-    ) THEN @key
+    WHEN [w].[AmmunitionType] = @ammoTypes1 THEN @key
     ELSE @key
-END IN (
-    SELECT [k].[value]
-    FROM OPENJSON(@keys) WITH ([value] uniqueidentifier '$') AS [k]
-)
+END IN (@keys1, @keys2)
 """);
     }
 

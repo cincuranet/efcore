@@ -552,25 +552,21 @@ WHERE [p].[Int] NOT IN (@ints1, @ints2)
 
         AssertSql(
             """
-@ints='[10,999]' (Size = 4000)
+@ints1='10'
+@ints2='999'
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[NullableInt] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ints) WITH ([value] int '$') AS [i]
-)
+WHERE [p].[NullableInt] IN (@ints1, @ints2)
 """,
             //
             """
-@ints='[10,999]' (Size = 4000)
+@ints1='10'
+@ints2='999'
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[NullableInt] NOT IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ints) WITH ([value] int '$') AS [i]
-) OR [p].[NullableInt] IS NULL
+WHERE [p].[NullableInt] NOT IN (@ints1, @ints2) OR [p].[NullableInt] IS NULL
 """);
     }
 
@@ -1518,7 +1514,8 @@ WHERE (
 
         AssertSql(
             """
-@ints='[11,111]' (Size = 4000)
+@ints1='11'
+@ints2='111'
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
@@ -1526,7 +1523,7 @@ WHERE (
     SELECT COUNT(*)
     FROM (
         SELECT 1 AS empty
-        FROM OPENJSON(@ints) AS [i]
+        FROM (VALUES (@ints1), (@ints2)) AS [i]([Value])
         UNION ALL
         SELECT 1 AS empty
         FROM OPENJSON([p].[Ints]) AS [i0]
@@ -1780,19 +1777,20 @@ WHERE (
         // TODO: the subquery projection contains extra columns which we should remove
         AssertSql(
             """
-@ints='[10,111]' (Size = 4000)
+@ints1='10'
+@ints2='111'
 
 SELECT COUNT(*)
 FROM [PrimitiveCollectionsEntity] AS [p]
 WHERE (
     SELECT COUNT(*)
     FROM (
-        SELECT CAST([i].[value] AS int) AS [value0]
-        FROM OPENJSON(@ints) AS [i]
-        ORDER BY CAST([i].[key] AS int)
+        SELECT [i].[Value] AS [Value0]
+        FROM (VALUES (1, @ints1), (2, @ints2)) AS [i]([_ord], [Value])
+        ORDER BY [i].[_ord]
         OFFSET 1 ROWS
     ) AS [i0]
-    WHERE [i0].[value0] > [p].[Id]) = 1
+    WHERE [i0].[Value0] > [p].[Id]) = 1
 """);
     }
 

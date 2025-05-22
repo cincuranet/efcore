@@ -12247,7 +12247,9 @@ WHERE (
 
         AssertSql(
             """
-@numbers='[0,1,2]' (Size = 4000)
+@numbers1='0'
+@numbers2='1'
+@numbers3='2'
 
 SELECT [u].[Nickname], [u].[SquadId], [w1].[Id], [w1].[AmmunitionType], [w1].[IsAutomatic], [w1].[Name], [w1].[OwnerFullName], [w1].[SynergyWithId]
 FROM (
@@ -12264,9 +12266,9 @@ LEFT JOIN (
         FROM [Weapons] AS [w]
     ) AS [w0]
     WHERE [w0].[row] <= ISNULL((
-        SELECT [n].[value]
-        FROM OPENJSON(@numbers) WITH ([value] int '$') AS [n]
-        ORDER BY [n].[value]
+        SELECT [n].[Value]
+        FROM (VALUES (1, @numbers1), (2, @numbers2), (3, @numbers3)) AS [n]([_ord], [Value])
+        ORDER BY [n].[Value]
         OFFSET 1 ROWS FETCH NEXT 1 ROWS ONLY), 0)
 ) AS [w1] ON [u].[FullName] = [w1].[OwnerFullName]
 ORDER BY [u].[Nickname], [u].[SquadId], [w1].[OwnerFullName], [w1].[Id]

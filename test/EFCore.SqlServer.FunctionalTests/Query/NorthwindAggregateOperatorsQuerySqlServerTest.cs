@@ -1804,25 +1804,21 @@ WHERE [c].[CustomerID] IN (N'ABCDE', N'ALFKI')
 
         AssertSql(
             """
-@p='["ABCDE","ALFKI"]' (Size = 4000)
+@p1='ABCDE' (Size = 5) (DbType = StringFixedLength)
+@p2='ALFKI' (Size = 5) (DbType = StringFixedLength)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] IN (
-    SELECT [p].[value]
-    FROM OPENJSON(@p) WITH ([value] nchar(5) '$') AS [p]
-)
+WHERE [c].[CustomerID] IN (@p1, @p2)
 """,
             //
             """
-@p='["ABCDE","ANATR"]' (Size = 4000)
+@p1='ABCDE' (Size = 5) (DbType = StringFixedLength)
+@p2='ANATR' (Size = 5) (DbType = StringFixedLength)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] IN (
-    SELECT [p].[value]
-    FROM OPENJSON(@p) WITH ([value] nchar(5) '$') AS [p]
-)
+WHERE [c].[CustomerID] IN (@p1, @p2)
 """);
     }
 
@@ -1879,14 +1875,12 @@ WHERE [c].[CustomerID] = @ids1
 
         AssertSql(
             """
-@ids='["ABCDE","ALFKI"]' (Size = 4000)
+@ids1='ABCDE' (Size = 5) (DbType = StringFixedLength)
+@ids2='ALFKI' (Size = 5) (DbType = StringFixedLength)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids) WITH ([value] nchar(5) '$') AS [i]
-)
+WHERE [c].[CustomerID] IN (@ids1, @ids2)
 """);
     }
 
@@ -2497,14 +2491,11 @@ WHERE [c].[CustomerID] IN (
 
         AssertSql(
             """
-@ids='["ALFKI"]' (Size = 4000)
+@ids1='ALFKI' (Size = 5) (DbType = StringFixedLength)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids) WITH ([value] nchar(5) '$') AS [i]
-)
+WHERE [c].[CustomerID] = @ids1
 """);
     }
 

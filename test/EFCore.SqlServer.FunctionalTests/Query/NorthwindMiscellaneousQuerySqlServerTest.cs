@@ -4874,17 +4874,8 @@ FROM [Customers] AS [c]
 
         AssertSql(
             """
-@list='[]' (Size = 4000)
-
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-ORDER BY CASE
-    WHEN [c].[CustomerID] NOT IN (
-        SELECT [l].[value]
-        FROM OPENJSON(@list) WITH ([value] nchar(5) '$') AS [l]
-    ) THEN CAST(1 AS bit)
-    ELSE CAST(0 AS bit)
-END
 """);
     }
 
@@ -6061,15 +6052,17 @@ WHERE [c].[CustomerID] = N'ALFKI'
 """,
             //
             """
-@orderIds='[10643,10692,10702,10835,10952,11011]' (Size = 4000)
+@orderIds1='10643'
+@orderIds2='10692'
+@orderIds3='10702'
+@orderIds4='10835'
+@orderIds5='10952'
+@orderIds6='11011'
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Orders] AS [o]
 LEFT JOIN [Customers] AS [c] ON [o].[CustomerID] = [c].[CustomerID]
-WHERE [o].[OrderID] IN (
-    SELECT [o0].[value]
-    FROM OPENJSON(@orderIds) WITH ([value] int '$') AS [o0]
-)
+WHERE [o].[OrderID] IN (@orderIds1, @orderIds2, @orderIds3, @orderIds4, @orderIds5, @orderIds6)
 """);
     }
 
@@ -7049,14 +7042,12 @@ ORDER BY (
 
         AssertSql(
             """
-@data='["ALFKIAlfreds Futterkiste","ANATRAna Trujillo Emparedados y helados"]' (Size = 4000)
+@data1='ALFKIAlfreds Futterkiste' (Size = 45)
+@data2='ANATRAna Trujillo Emparedados y helados' (Size = 45)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] + [c].[CompanyName] IN (
-    SELECT [d].[value]
-    FROM OPENJSON(@data) WITH ([value] nvarchar(45) '$') AS [d]
-)
+WHERE [c].[CustomerID] + [c].[CompanyName] IN (@data1, @data2)
 """);
     }
 

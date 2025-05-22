@@ -6976,14 +6976,11 @@ WHERE (
             """
 @start='1902-01-01T10:00:00.1234567+01:30'
 @end='1902-01-03T10:00:00.1234567+01:30'
-@dates='["1902-01-02T10:00:00.1234567+01:30"]' (Size = 4000)
+@dates1='1902-01-02T10:00:00.1234567+01:30'
 
 SELECT [m].[Id], [m].[CodeName], [m].[Date], [m].[Difficulty], [m].[Duration], [m].[Rating], [m].[Time], [m].[Timeline]
 FROM [Missions] AS [m]
-WHERE @start <= CAST(CONVERT(date, [m].[Timeline]) AS datetimeoffset) AND [m].[Timeline] < @end AND [m].[Timeline] IN (
-    SELECT [d].[value]
-    FROM OPENJSON(@dates) WITH ([value] datetimeoffset '$') AS [d]
-)
+WHERE @start <= CAST(CONVERT(date, [m].[Timeline]) AS datetimeoffset) AND [m].[Timeline] < @end AND [m].[Timeline] = @dates1
 """);
     }
 
@@ -10395,7 +10392,9 @@ WHERE (
 
         AssertSql(
             """
-@numbers='[0,1,2]' (Size = 4000)
+@numbers1='0'
+@numbers2='1'
+@numbers3='2'
 
 SELECT [g].[Nickname], [g].[SquadId], [w1].[Id], [w1].[AmmunitionType], [w1].[IsAutomatic], [w1].[Name], [w1].[OwnerFullName], [w1].[SynergyWithId]
 FROM [Gears] AS [g]
@@ -10406,9 +10405,9 @@ LEFT JOIN (
         FROM [Weapons] AS [w]
     ) AS [w0]
     WHERE [w0].[row] <= ISNULL((
-        SELECT [n].[value]
-        FROM OPENJSON(@numbers) WITH ([value] int '$') AS [n]
-        ORDER BY [n].[value]
+        SELECT [n].[Value]
+        FROM (VALUES (1, @numbers1), (2, @numbers2), (3, @numbers3)) AS [n]([_ord], [Value])
+        ORDER BY [n].[Value]
         OFFSET 1 ROWS FETCH NEXT 1 ROWS ONLY), 0)
 ) AS [w1] ON [g].[FullName] = [w1].[OwnerFullName]
 ORDER BY [g].[Nickname], [g].[SquadId], [w1].[OwnerFullName], [w1].[Id]

@@ -658,25 +658,21 @@ WHERE [p].[NullableInt] NOT IN (@ints1, @ints2) OR [p].[NullableInt] IS NULL
 
         AssertSql(
             """
-@strings='["10","999"]' (Size = 4000)
+@strings1='10' (Size = 4000)
+@strings2='999' (Size = 4000)
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[String] IN (
-    SELECT [s].[value]
-    FROM OPENJSON(@strings) WITH ([value] nvarchar(max) '$') AS [s]
-)
+WHERE [p].[String] IN (@strings1, @strings2)
 """,
             //
             """
-@strings='["10","999"]' (Size = 4000)
+@strings1='10' (Size = 4000)
+@strings2='999' (Size = 4000)
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[String] NOT IN (
-    SELECT [s].[value]
-    FROM OPENJSON(@strings) WITH ([value] nvarchar(max) '$') AS [s]
-)
+WHERE [p].[String] NOT IN (@strings1, @strings2)
 """);
     }
 
@@ -1814,19 +1810,20 @@ WHERE (
         // TODO: the subquery projection contains extra columns which we should remove
         AssertSql(
             """
-@ints='[10,111]' (Size = 4000)
+@ints1='10'
+@ints2='111'
 
 SELECT COUNT(*)
 FROM [PrimitiveCollectionsEntity] AS [p]
 WHERE (
     SELECT COUNT(*)
     FROM (
-        SELECT CAST([i].[value] AS int) AS [value0]
-        FROM OPENJSON(@ints) AS [i]
-        ORDER BY CAST([i].[key] AS int)
+        SELECT [i].[Value] AS [Value0]
+        FROM (VALUES (1, @ints1), (2, @ints2)) AS [i]([_ord], [Value])
+        ORDER BY [i].[_ord]
         OFFSET 1 ROWS
     ) AS [i0]
-    WHERE [i0].[value0] > [p].[Id]) = 1
+    WHERE [i0].[Value0] > [p].[Id]) = 1
 """);
     }
 
