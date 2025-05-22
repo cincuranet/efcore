@@ -2730,14 +2730,11 @@ INNER JOIN [Entities2] AS [e0] ON [e].[NullableIntA] = [e0].[NullableIntB] OR ([
 
         AssertSql(
             """
-@ids_without_nulls='["Foo"]' (Size = 4000)
+@ids1='Foo' (Size = 4000)
 
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[NullableStringA] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids_without_nulls) AS [i]
-) OR [e].[NullableStringA] IS NULL
+WHERE [e].[NullableStringA] IS NULL OR [e].[NullableStringA] = @ids1
 """);
     }
 

@@ -1655,31 +1655,26 @@ WHERE [c].[CustomerID] = @ids1
 
         AssertSql(
             """
-@ids='["London","Buenos Aires"]' (Size = 4000)
+@ids1='London' (Size = 15)
+@ids2='Buenos Aires' (Size = 15)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
 WHERE EXISTS (
     SELECT 1
     FROM [Customers] AS [c0]
-    WHERE [c0].[City] IN (
-        SELECT [i].[value]
-        FROM OPENJSON(@ids) WITH ([value] nvarchar(15) '$') AS [i]
-    ) AND [c0].[CustomerID] = [c].[CustomerID])
+    WHERE [c0].[City] IN (@ids1, @ids2) AND [c0].[CustomerID] = [c].[CustomerID])
 """,
             //
             """
-@ids='["London"]' (Size = 4000)
+@ids1='London' (Size = 15)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
 WHERE EXISTS (
     SELECT 1
     FROM [Customers] AS [c0]
-    WHERE [c0].[City] IN (
-        SELECT [i].[value]
-        FROM OPENJSON(@ids) WITH ([value] nvarchar(15) '$') AS [i]
-    ) AND [c0].[CustomerID] = [c].[CustomerID])
+    WHERE [c0].[City] = @ids1 AND [c0].[CustomerID] = [c].[CustomerID])
 """);
     }
 
@@ -1770,14 +1765,12 @@ WHERE [c].[CustomerID] IN (@ids1, @ids2)
 
         AssertSql(
             """
-@ids='["ABCDE","ALFKI"]' (Size = 4000)
+@ids1='ABCDE' (Size = 5) (DbType = StringFixedLength)
+@ids2='ALFKI' (Size = 5) (DbType = StringFixedLength)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids) WITH ([value] nchar(5) '$') AS [i]
-)
+WHERE [c].[CustomerID] IN (@ids1, @ids2)
 """);
     }
 
@@ -2234,14 +2227,9 @@ WHERE [c].[CustomerID] IN (
 
         AssertSql(
             """
-@ids='[]' (Size = 4000)
-
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids) WITH ([value] nchar(5) '$') AS [i]
-)
+WHERE 0 = 1
 """);
     }
 
