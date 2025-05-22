@@ -137,7 +137,8 @@ public class SqlNullabilityProcessor : ExpressionVisitor
 
                 foreach (var value in values)
                 {
-                    if (ParameterizedCollectionTranslationMode is null or EntityFrameworkCore.Internal.ParameterizedCollectionTranslationMode.ParameterizeExpanded)
+                    if (!valuesParameter.ShouldBeConstantized
+                        && (ParameterizedCollectionTranslationMode is null or EntityFrameworkCore.Internal.ParameterizedCollectionTranslationMode.ParameterizeExpanded))
                     {
                         var parameterName = Uniquifier.Uniquify(valuesParameter.Name, ParameterValues, int.MaxValue);
                         ParameterValues.Add(parameterName, value);
@@ -810,7 +811,8 @@ public class SqlNullabilityProcessor : ExpressionVisitor
                         hasNull = true;
                         continue;
                     }
-                    if (ParameterizedCollectionTranslationMode is null or EntityFrameworkCore.Internal.ParameterizedCollectionTranslationMode.ParameterizeExpanded)
+                    if (!valuesParameter.ShouldBeConstantized
+                        && (ParameterizedCollectionTranslationMode is null or EntityFrameworkCore.Internal.ParameterizedCollectionTranslationMode.ParameterizeExpanded))
                     {
                         var parameterName = Uniquifier.Uniquify(valuesParameter.Name, ParameterValues, int.MaxValue);
                         ParameterValues.Add(parameterName, value);
