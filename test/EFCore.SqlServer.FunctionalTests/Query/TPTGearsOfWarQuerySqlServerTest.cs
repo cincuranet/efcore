@@ -325,7 +325,12 @@ FROM [Tags] AS [t]
 """,
             //
             """
-@tags='["34c8d86e-a4ac-4be5-827f-584dda348a07","df36f493-463f-4123-83f9-6b135deeb7ba","a8ad98f9-e023-4e2a-9a70-c2728455bd34","70534e05-782c-4052-8720-c2c54481ce5f","a7be028a-0cf2-448f-ab55-ce8bc5d8cf69","b39a6fba-9026-4d69-828e-fd7068673e57"]' (Size = 4000)
+@tags1='34c8d86e-a4ac-4be5-827f-584dda348a07'
+@tags2='df36f493-463f-4123-83f9-6b135deeb7ba'
+@tags3='a8ad98f9-e023-4e2a-9a70-c2728455bd34'
+@tags4='70534e05-782c-4052-8720-c2c54481ce5f'
+@tags5='a7be028a-0cf2-448f-ab55-ce8bc5d8cf69'
+@tags6='b39a6fba-9026-4d69-828e-fd7068673e57'
 
 SELECT [g].[Nickname], [g].[SquadId], [g].[AssignedCityName], [g].[CityOfBirthName], [g].[FullName], [g].[HasSoulPatch], [g].[LeaderNickname], [g].[LeaderSquadId], [g].[Rank], CASE
     WHEN [o].[Nickname] IS NOT NULL THEN N'Officer'
@@ -334,10 +339,7 @@ FROM [Gears] AS [g]
 LEFT JOIN [Officers] AS [o] ON [g].[Nickname] = [o].[Nickname] AND [g].[SquadId] = [o].[SquadId]
 INNER JOIN [Cities] AS [c] ON [g].[CityOfBirthName] = [c].[Name]
 LEFT JOIN [Tags] AS [t] ON [g].[Nickname] = [t].[GearNickName] AND [g].[SquadId] = [t].[GearSquadId]
-WHERE [c].[Location] IS NOT NULL AND [t].[Id] IN (
-    SELECT [t0].[value]
-    FROM OPENJSON(@tags) WITH ([value] uniqueidentifier '$') AS [t0]
-)
+WHERE [c].[Location] IS NOT NULL AND [t].[Id] IN (@tags1, @tags2, @tags3, @tags4, @tags5, @tags6)
 """);
     }
 
@@ -3524,7 +3526,7 @@ ORDER BY [g].[Nickname], [s].[Nickname]
 
         AssertSql(
             """
-@cities_without_nulls='["Ephyra"]' (Size = 4000)
+@cities1='Ephyra' (Size = 450)
 
 SELECT [g].[Nickname], [g].[SquadId], [g].[AssignedCityName], [g].[CityOfBirthName], [g].[FullName], [g].[HasSoulPatch], [g].[LeaderNickname], [g].[LeaderSquadId], [g].[Rank], CASE
     WHEN [o].[Nickname] IS NOT NULL THEN N'Officer'
@@ -3532,10 +3534,7 @@ END AS [Discriminator]
 FROM [Gears] AS [g]
 LEFT JOIN [Officers] AS [o] ON [g].[Nickname] = [o].[Nickname] AND [g].[SquadId] = [o].[SquadId]
 LEFT JOIN [Cities] AS [c] ON [g].[AssignedCityName] = [c].[Name]
-WHERE [g].[SquadId] < 2 AND ([c].[Name] IN (
-    SELECT [c0].[value]
-    FROM OPENJSON(@cities_without_nulls) AS [c0]
-) OR [c].[Name] IS NULL)
+WHERE [g].[SquadId] < 2 AND ([c].[Name] IS NULL OR [c].[Name] = @cities1)
 """);
     }
 
@@ -9168,17 +9167,15 @@ ORDER BY [s0].[Nickname], [s0].[SquadId], [s0].[HasSoulPatch0]
 
         AssertSql(
             """
-@values='[false,true]' (Size = 4000)
+@values1='False'
+@values2='True'
 
 SELECT [g].[Nickname], [g].[SquadId], [g].[AssignedCityName], [g].[CityOfBirthName], [g].[FullName], [g].[HasSoulPatch], [g].[LeaderNickname], [g].[LeaderSquadId], [g].[Rank], CASE
     WHEN [o].[Nickname] IS NOT NULL THEN N'Officer'
 END AS [Discriminator]
 FROM [Gears] AS [g]
 LEFT JOIN [Officers] AS [o] ON [g].[Nickname] = [o].[Nickname] AND [g].[SquadId] = [o].[SquadId]
-WHERE [g].[HasSoulPatch] = CAST(1 AS bit) AND [g].[HasSoulPatch] IN (
-    SELECT [v].[value]
-    FROM OPENJSON(@values) WITH ([value] bit '$') AS [v]
-)
+WHERE [g].[HasSoulPatch] = CAST(1 AS bit) AND [g].[HasSoulPatch] IN (@values1, @values2)
 """);
     }
 
@@ -10365,7 +10362,8 @@ GROUP BY [s].[Name]
 
         AssertSql(
             """
-@numbers='[1,-1]' (Size = 4000)
+@numbers1='1'
+@numbers2='-1'
 
 SELECT [g].[Nickname], [g].[SquadId], [g].[AssignedCityName], [g].[CityOfBirthName], [g].[FullName], [g].[HasSoulPatch], [g].[LeaderNickname], [g].[LeaderSquadId], [g].[Rank], CASE
     WHEN [o].[Nickname] IS NOT NULL THEN N'Officer'
@@ -10378,10 +10376,7 @@ WHERE CASE
         FROM [Weapons] AS [w]
         WHERE [g].[FullName] = [w].[OwnerFullName]) THEN 1
     ELSE 0
-END IN (
-    SELECT [n].[value]
-    FROM OPENJSON(@numbers) WITH ([value] int '$') AS [n]
-)
+END IN (@numbers1, @numbers2)
 """);
     }
 
@@ -10652,9 +10647,10 @@ LEFT JOIN [LocustHighCommands] AS [l1] ON [l0].[HighCommandId] = [l1].[Id]
 
         AssertSql(
             """
-@ranks='[1]' (Size = 4000)
+@ranks1='1'
 @key='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
-@keys='["0a47bcb7-a1cb-4345-8944-c58f82d6aac7","5f221fb9-66f4-442a-92c9-d97ed5989cc7"]' (Size = 4000)
+@keys1='0a47bcb7-a1cb-4345-8944-c58f82d6aac7'
+@keys2='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
 
 SELECT [g].[Nickname], [g].[SquadId], [g].[AssignedCityName], [g].[CityOfBirthName], [g].[FullName], [g].[HasSoulPatch], [g].[LeaderNickname], [g].[LeaderSquadId], [g].[Rank], CASE
     WHEN [o].[Nickname] IS NOT NULL THEN N'Officer'
@@ -10662,34 +10658,23 @@ END AS [Discriminator]
 FROM [Gears] AS [g]
 LEFT JOIN [Officers] AS [o] ON [g].[Nickname] = [o].[Nickname] AND [g].[SquadId] = [o].[SquadId]
 WHERE CASE
-    WHEN [g].[Rank] IN (
-        SELECT [r].[value]
-        FROM OPENJSON(@ranks) WITH ([value] int '$') AS [r]
-    ) THEN @key
+    WHEN [g].[Rank] = @ranks1 THEN @key
     ELSE @key
-END IN (
-    SELECT [k].[value]
-    FROM OPENJSON(@keys) WITH ([value] uniqueidentifier '$') AS [k]
-)
+END IN (@keys1, @keys2)
 """,
             //
             """
-@ammoTypes='[1]' (Size = 4000)
+@ammoTypes1='1'
 @key='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
-@keys='["0a47bcb7-a1cb-4345-8944-c58f82d6aac7","5f221fb9-66f4-442a-92c9-d97ed5989cc7"]' (Size = 4000)
+@keys1='0a47bcb7-a1cb-4345-8944-c58f82d6aac7'
+@keys2='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
 
 SELECT [w].[Id], [w].[AmmunitionType], [w].[IsAutomatic], [w].[Name], [w].[OwnerFullName], [w].[SynergyWithId]
 FROM [Weapons] AS [w]
 WHERE CASE
-    WHEN [w].[AmmunitionType] IN (
-        SELECT [a].[value]
-        FROM OPENJSON(@ammoTypes) WITH ([value] int '$') AS [a]
-    ) THEN @key
+    WHEN [w].[AmmunitionType] = @ammoTypes1 THEN @key
     ELSE @key
-END IN (
-    SELECT [k].[value]
-    FROM OPENJSON(@keys) WITH ([value] uniqueidentifier '$') AS [k]
-)
+END IN (@keys1, @keys2)
 """);
     }
 

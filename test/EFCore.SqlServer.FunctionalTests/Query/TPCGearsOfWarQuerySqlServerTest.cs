@@ -344,7 +344,12 @@ FROM [Tags] AS [t]
 """,
             //
             """
-@tags='["34c8d86e-a4ac-4be5-827f-584dda348a07","df36f493-463f-4123-83f9-6b135deeb7ba","a8ad98f9-e023-4e2a-9a70-c2728455bd34","70534e05-782c-4052-8720-c2c54481ce5f","a7be028a-0cf2-448f-ab55-ce8bc5d8cf69","b39a6fba-9026-4d69-828e-fd7068673e57"]' (Size = 4000)
+@tags1='34c8d86e-a4ac-4be5-827f-584dda348a07'
+@tags2='df36f493-463f-4123-83f9-6b135deeb7ba'
+@tags3='a8ad98f9-e023-4e2a-9a70-c2728455bd34'
+@tags4='70534e05-782c-4052-8720-c2c54481ce5f'
+@tags5='a7be028a-0cf2-448f-ab55-ce8bc5d8cf69'
+@tags6='b39a6fba-9026-4d69-828e-fd7068673e57'
 
 SELECT [u].[Nickname], [u].[SquadId], [u].[AssignedCityName], [u].[CityOfBirthName], [u].[FullName], [u].[HasSoulPatch], [u].[LeaderNickname], [u].[LeaderSquadId], [u].[Rank], [u].[Discriminator], [t].[Id], [t].[GearNickName], [t].[GearSquadId], [t].[IssueDate], [t].[Note]
 FROM (
@@ -356,10 +361,7 @@ FROM (
 ) AS [u]
 INNER JOIN [Cities] AS [c] ON [u].[CityOfBirthName] = [c].[Name]
 LEFT JOIN [Tags] AS [t] ON [u].[Nickname] = [t].[GearNickName] AND [u].[SquadId] = [t].[GearSquadId]
-WHERE [c].[Location] IS NOT NULL AND [t].[Id] IN (
-    SELECT [t0].[value]
-    FROM OPENJSON(@tags) WITH ([value] uniqueidentifier '$') AS [t0]
-)
+WHERE [c].[Location] IS NOT NULL AND [t].[Id] IN (@tags1, @tags2, @tags3, @tags4, @tags5, @tags6)
 """);
     }
 
@@ -4085,7 +4087,7 @@ ORDER BY [u].[Nickname], [u0].[Nickname]
 
         AssertSql(
             """
-@cities_without_nulls='["Ephyra"]' (Size = 4000)
+@cities1='Ephyra' (Size = 450)
 
 SELECT [u].[Nickname], [u].[SquadId], [u].[AssignedCityName], [u].[CityOfBirthName], [u].[FullName], [u].[HasSoulPatch], [u].[LeaderNickname], [u].[LeaderSquadId], [u].[Rank], [u].[Discriminator]
 FROM (
@@ -4096,10 +4098,7 @@ FROM (
     FROM [Officers] AS [o]
 ) AS [u]
 LEFT JOIN [Cities] AS [c] ON [u].[AssignedCityName] = [c].[Name]
-WHERE [u].[SquadId] < 2 AND ([c].[Name] IN (
-    SELECT [c0].[value]
-    FROM OPENJSON(@cities_without_nulls) AS [c0]
-) OR [c].[Name] IS NULL)
+WHERE [u].[SquadId] < 2 AND ([c].[Name] IS NULL OR [c].[Name] = @cities1)
 """);
     }
 
@@ -7429,8 +7428,6 @@ ORDER BY [c].[Name], [u].[Nickname] DESC
 
         AssertSql(
             """
-@nicknames='[]' (Size = 4000)
-
 SELECT [u].[Nickname], [u].[SquadId], [w].[Name], [w].[Id]
 FROM (
     SELECT [g].[Nickname], [g].[SquadId], [g].[FullName]
@@ -7440,13 +7437,7 @@ FROM (
     FROM [Officers] AS [o]
 ) AS [u]
 LEFT JOIN [Weapons] AS [w] ON [u].[FullName] = [w].[OwnerFullName]
-ORDER BY CASE
-    WHEN [u].[Nickname] IN (
-        SELECT [n].[value]
-        FROM OPENJSON(@nicknames) WITH ([value] nvarchar(450) '$') AS [n]
-    ) THEN CAST(1 AS bit)
-    ELSE CAST(0 AS bit)
-END DESC, [u].[Nickname], [u].[SquadId]
+ORDER BY [u].[Nickname], [u].[SquadId]
 """);
     }
 
@@ -8276,13 +8267,11 @@ WHERE (
             """
 @start='1902-01-01T10:00:00.1234567+01:30'
 @end='1902-01-03T10:00:00.1234567+01:30'
-@dates='["1902-01-02T10:00:00.1234567+01:30"]' (Size = 4000)
+@dates1='1902-01-02T10:00:00.1234567+01:30'
 
 SELECT [m].[Id], [m].[CodeName], [m].[Date], [m].[Difficulty], [m].[Duration], [m].[Rating], [m].[Time], [m].[Timeline]
 FROM [Missions] AS [m]
-WHERE @start <= CAST(CONVERT(date, [m].[Timeline]) AS datetimeoffset) AND [m].[Timeline] < @end AND [m].[Timeline] IN (
-    SELECT [d].[value]
-    FROM OPENJSON(@dates) WITH ([value] datetimeoffset '$') AS [d]
+WHERE @start <= CAST(CONVERT(date, [m].[Timeline]) AS datetimeoffset) AND [m].[Timeline] < @end AND [m].[Timeline] = @dates1
 )
 """);
     }
@@ -12245,7 +12234,7 @@ END IN (
 
         AssertSql(
             """
-@weapons='["Marcus\u0027 Lancer","Dom\u0027s Gnasher"]' (Size = 4000)
+@weapons1='Marcus' Lancer' (Size = 4000), @weapons2='Dom's Gnasher' (Size = 4000)
 
 SELECT [u].[Nickname], [u].[SquadId], [u].[AssignedCityName], [u].[CityOfBirthName], [u].[FullName], [u].[HasSoulPatch], [u].[LeaderNickname], [u].[LeaderSquadId], [u].[Rank], [u].[Discriminator]
 FROM (
@@ -12259,10 +12248,7 @@ WHERE (
     SELECT TOP(1) [w0].[Name]
     FROM [Weapons] AS [w0]
     WHERE [u].[FullName] = [w0].[OwnerFullName]
-    ORDER BY [w0].[Id]) IN (
-    SELECT [w].[value]
-    FROM OPENJSON(@weapons) WITH ([value] nvarchar(max) '$') AS [w]
-)
+    ORDER BY [w0].[Id]) IN (@weapons1, @weapons2)
 """);
     }
 

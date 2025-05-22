@@ -3030,25 +3030,22 @@ ORDER BY [l].[Id], [s].[Date], [s].[Date0], [s].[Name]
 
         AssertSql(
             """
-@validIds='["L1 01","L1 02"]' (Size = 4000)
+@validIds1='L1 01' (Size = 4000)
+@validIds2='L1 02' (Size = 4000)
+@validIds3='L1 01' (Size = 4000)
+@validIds4='L1 02' (Size = 4000)
 
 SELECT [l1].[Date], [l2].[Id]
 FROM (
     SELECT [l].[Date]
     FROM [Level1] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [l]
-    WHERE [l].[Name] IN (
-        SELECT [v].[value]
-        FROM OPENJSON(@validIds) WITH ([value] nvarchar(max) '$') AS [v]
-    )
+    WHERE [l].[Name] IN (@validIds1, @validIds2)
     GROUP BY [l].[Date]
 ) AS [l1]
 LEFT JOIN (
     SELECT [l0].[Id], [l0].[Date]
     FROM [Level1] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [l0]
-    WHERE [l0].[Name] IN (
-        SELECT [v0].[value]
-        FROM OPENJSON(@validIds) WITH ([value] nvarchar(max) '$') AS [v0]
-    )
+    WHERE [l0].[Name] IN (@validIds3, @validIds4)
 ) AS [l2] ON [l1].[Date] = [l2].[Date]
 ORDER BY [l1].[Date]
 """);
