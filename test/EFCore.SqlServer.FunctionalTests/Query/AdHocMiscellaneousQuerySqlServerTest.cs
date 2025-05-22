@@ -548,14 +548,11 @@ ORDER BY [p].[Id]
 
         AssertSql(
             """
-@testDateList='["2018-10-07T00:00:00"]' (Size = 4000)
+@testDateList1='2018-10-07T00:00:00.0000000' (DbType = DateTime)
 
 SELECT [r].[Id], [r].[MyTime]
 FROM [ReproEntity] AS [r]
-WHERE [r].[MyTime] IN (
-    SELECT [t].[value]
-    FROM OPENJSON(@testDateList) WITH ([value] smalldatetime '$') AS [t]
-)
+WHERE [r].[MyTime] = @testDateList1
 """);
     }
 

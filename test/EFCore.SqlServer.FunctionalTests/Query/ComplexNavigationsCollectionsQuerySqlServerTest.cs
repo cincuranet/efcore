@@ -1216,7 +1216,8 @@ ORDER BY [l].[Id], [l0].[Id], [l1].[Id]
 
         AssertSql(
             """
-@validIds='["L1 01","L1 02"]' (Size = 4000)
+@validIds1='L1 01' (Size = 4000)
+@validIds2='L1 02' (Size = 4000)
 
 SELECT CASE
     WHEN [l0].[Id] IS NULL THEN 0
@@ -1225,10 +1226,7 @@ END, [l].[Id], [l0].[Id], [l1].[Id], [l1].[Level2_Optional_Id], [l1].[Level2_Req
 FROM [LevelOne] AS [l]
 LEFT JOIN [LevelTwo] AS [l0] ON [l].[Id] = [l0].[Level1_Required_Id]
 LEFT JOIN [LevelThree] AS [l1] ON [l0].[Id] = [l1].[OneToMany_Required_Inverse3Id]
-WHERE [l].[Name] IN (
-    SELECT [v].[value]
-    FROM OPENJSON(@validIds) WITH ([value] nvarchar(max) '$') AS [v]
-)
+WHERE [l].[Name] IN (@validIds1, @validIds2)
 ORDER BY [l].[Id], [l0].[Id]
 """);
     }

@@ -1045,18 +1045,14 @@ WHERE [t].[Id] IN (
 
         AssertSql(
             """
-@dateTimes='["2020-01-01T12:30:00","2020-01-02T12:30:00"]' (Size = 4000)
-@dateTimes0='["2020-01-01T12:30:00","2020-01-02T12:30:00"]' (Size = 4000)
+@dateTimes1='2020-01-01T12:30:00.0000000' (DbType = DateTime)
+@dateTimes2='2020-01-02T12:30:00.0000000' (DbType = DateTime)
+@dateTimes3='2020-01-01T12:30:00.0000000'
+@dateTimes4='2020-01-02T12:30:00.0000000'
 
 SELECT [t].[Id], [t].[DateTime], [t].[DateTime2], [t].[Ints]
 FROM [TestEntity] AS [t]
-WHERE [t].[DateTime] IN (
-    SELECT [d].[value]
-    FROM OPENJSON(@dateTimes) WITH ([value] datetime '$') AS [d]
-) AND [t].[DateTime2] IN (
-    SELECT [d0].[value]
-    FROM OPENJSON(@dateTimes0) WITH ([value] datetime2 '$') AS [d0]
-)
+WHERE [t].[DateTime] IN (@dateTimes1, @dateTimes2) AND [t].[DateTime2] IN (@dateTimes3, @dateTimes4)
 """);
     }
 
