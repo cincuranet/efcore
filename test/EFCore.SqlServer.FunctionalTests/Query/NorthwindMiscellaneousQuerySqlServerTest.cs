@@ -4863,17 +4863,8 @@ FROM (
 
         AssertSql(
             """
-@list='[]' (Size = 4000)
-
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-ORDER BY CASE
-    WHEN [c].[CustomerID] IN (
-        SELECT [l].[value]
-        FROM OPENJSON(@list) WITH ([value] nchar(5) '$') AS [l]
-    ) THEN CAST(1 AS bit)
-    ELSE CAST(0 AS bit)
-END
 """);
     }
 
@@ -7092,15 +7083,15 @@ WHERE [c].[CustomerID] + N'SomeConstant' IN (
 
         AssertSql(
             """
-@data='["ALFKIALFKI","ALFKI","ANATRAna Trujillo Emparedados y helados","ANATRANATR"]' (Size = 4000)
+@data1='ALFKIALFKI' (Size = 10) (DbType = StringFixedLength)
+@data2='ALFKI' (Size = 10)
+@data3='ANATRAna Trujillo Emparedados y helados' (Size = 4000)
+@data4='ANATRANATR' (Size = 10) (DbType = StringFixedLength)
 
 SELECT [o].[OrderID], [o].[CustomerID], [o].[EmployeeID], [o].[OrderDate]
 FROM [Orders] AS [o]
 LEFT JOIN [Customers] AS [c] ON [o].[CustomerID] = [c].[CustomerID]
-WHERE COALESCE([o].[CustomerID], N'') + COALESCE([c].[CustomerID], N'') IN (
-    SELECT [d].[value]
-    FROM OPENJSON(@data) WITH ([value] nchar(10) '$') AS [d]
-)
+WHERE COALESCE([o].[CustomerID], N'') + COALESCE([c].[CustomerID], N'') IN (@data1, @data2, @data3, @data4)
 """);
     }
 

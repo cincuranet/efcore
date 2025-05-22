@@ -1765,14 +1765,12 @@ WHERE [c].[Location] = @value
 
         AssertSql(
             """
-@cities='["Unknown","Jacinto\u0027s location","Ephyra\u0027s location"]' (Size = 4000)
+@cities1='Unknown' (Size = 100) (DbType = AnsiString)
+@cities2='Jacinto's location' (Size = 100) (DbType = AnsiString), @cities3='Ephyra's location' (Size = 100) (DbType = AnsiString)
 
 SELECT [c].[Name], [c].[Location], [c].[Nation]
 FROM [Cities] AS [c]
-WHERE [c].[Location] IN (
-    SELECT [c0].[value]
-    FROM OPENJSON(@cities) WITH ([value] varchar(100) '$') AS [c0]
-)
+WHERE [c].[Location] IN (@cities1, @cities2, @cities3)
 """);
     }
 
@@ -8443,14 +8441,12 @@ ORDER BY [s].[Nickname], [s].[SquadId], [s].[HasSoulPatch0]
 
         AssertSql(
             """
-@values='[false,true]' (Size = 4000)
+@values1='False'
+@values2='True'
 
 SELECT [g].[Nickname], [g].[SquadId], [g].[AssignedCityName], [g].[CityOfBirthName], [g].[Discriminator], [g].[FullName], [g].[HasSoulPatch], [g].[LeaderNickname], [g].[LeaderSquadId], [g].[Rank]
 FROM [Gears] AS [g]
-WHERE [g].[HasSoulPatch] = CAST(1 AS bit) AND [g].[HasSoulPatch] IN (
-    SELECT [v].[value]
-    FROM OPENJSON(@values) WITH ([value] bit '$') AS [v]
-)
+WHERE [g].[HasSoulPatch] = CAST(1 AS bit) AND [g].[HasSoulPatch] IN (@values1, @values2)
 """);
     }
 
@@ -8466,7 +8462,6 @@ WHERE [g].[HasSoulPatch] = CAST(1 AS bit) AND [g].[HasSoulPatch] IN (
 SELECT [g].[Nickname], [g].[SquadId], [g].[AssignedCityName], [g].[CityOfBirthName], [g].[Discriminator], [g].[FullName], [g].[HasSoulPatch], [g].[LeaderNickname], [g].[LeaderSquadId], [g].[Rank]
 FROM [Gears] AS [g]
 WHERE [g].[HasSoulPatch] = CAST(1 AS bit) AND [g].[HasSoulPatch] IN (@values1, @values2)
-)
 """);
     }
 

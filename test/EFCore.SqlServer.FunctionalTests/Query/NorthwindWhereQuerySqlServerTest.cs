@@ -1662,14 +1662,11 @@ WHERE [o].[OrderID] = 10274
 
         AssertSql(
             """
-@cities='["Seattle"]' (Size = 4000)
+@cities1='Seattle' (Size = 15)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[City] IN (
-    SELECT [c0].[value]
-    FROM OPENJSON(@cities) WITH ([value] nvarchar(15) '$') AS [c0]
-)
+WHERE [c].[City] = @cities1
 """);
     }
 
@@ -2026,14 +2023,12 @@ ORDER BY [o].[OrderID], [o1].[OrderID]
 
         AssertSql(
             """
-@orderIds='[10248,10249]' (Size = 4000)
+@orderIds1='10248'
+@orderIds2='10249'
 
 SELECT [o].[OrderID], [o].[CustomerID], [o].[EmployeeID], [o].[OrderDate]
 FROM [Orders] AS [o]
-WHERE [o].[OrderID] IN (
-    SELECT [o0].[value]
-    FROM OPENJSON(@orderIds) WITH ([value] int '$') AS [o0]
-)
+WHERE [o].[OrderID] IN (@orderIds1, @orderIds2)
 """);
     }
 

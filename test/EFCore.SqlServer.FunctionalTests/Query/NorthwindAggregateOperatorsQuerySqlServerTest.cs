@@ -1780,14 +1780,9 @@ WHERE [c].[CustomerID] IN (@ids1, @ids2)
 
         AssertSql(
             """
-@ids='[null,null]' (Size = 4000)
-
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids) WITH ([value] nchar(5) '$') AS [i]
-)
+WHERE 0 = 1
 """);
     }
 
@@ -1901,14 +1896,9 @@ WHERE [c].[CustomerID] IN (
 
         AssertSql(
             """
-@ids='[]' (Size = 4000)
-
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids) WITH ([value] nchar(5) '$') AS [i]
-)
+WHERE 0 = 1
 """);
     }
 
@@ -2107,25 +2097,21 @@ WHERE [c].[CustomerID] IN (N'ABCDE', N'ALFKI')
 
         AssertSql(
             """
-@AsReadOnly='["ABCDE","ALFKI"]' (Size = 4000)
+@AsReadOnly1='ABCDE' (Size = 5) (DbType = StringFixedLength)
+@AsReadOnly2='ALFKI' (Size = 5) (DbType = StringFixedLength)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] IN (
-    SELECT [a].[value]
-    FROM OPENJSON(@AsReadOnly) WITH ([value] nchar(5) '$') AS [a]
-)
+WHERE [c].[CustomerID] IN (@AsReadOnly1, @AsReadOnly2)
 """,
             //
             """
-@AsReadOnly='["ABCDE","ANATR"]' (Size = 4000)
+@AsReadOnly1='ABCDE' (Size = 5) (DbType = StringFixedLength)
+@AsReadOnly2='ANATR' (Size = 5) (DbType = StringFixedLength)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] IN (
-    SELECT [a].[value]
-    FROM OPENJSON(@AsReadOnly) WITH ([value] nchar(5) '$') AS [a]
-)
+WHERE [c].[CustomerID] IN (@AsReadOnly1, @AsReadOnly2)
 """);
     }
 
@@ -2466,9 +2452,11 @@ WHERE [o].[OrderID] IN (10248, 10249)
 
         AssertSql(
             """
+@ids1='ALFKI' (Size = 5) (DbType = StringFixedLength)
+
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] = N'ALFKI'
+WHERE [c].[CustomerID] = @ids1
 """);
     }
 
@@ -2478,9 +2466,11 @@ WHERE [c].[CustomerID] = N'ALFKI'
 
         AssertSql(
             """
+@ids1='ALFKI' (Size = 5) (DbType = StringFixedLength)
+
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] = N'ALFKI'
+WHERE [c].[CustomerID] = @ids1
 """);
     }
 
