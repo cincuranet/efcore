@@ -2396,9 +2396,12 @@ WHERE [c].[CustomerID] IN (@entity_equality_customers_CustomerID1, @entity_equal
 
         AssertSql(
             """
+@entity_equality_orders_OrderID1='10248'
+@entity_equality_orders_OrderID2='10249'
+
 SELECT [o].[OrderID], [o].[CustomerID], [o].[EmployeeID], [o].[OrderDate]
 FROM [Orders] AS [o]
-WHERE [o].[OrderID] IN (10248, 10249)
+WHERE [o].[OrderID] IN (@entity_equality_orders_OrderID1, @entity_equality_orders_OrderID2)
 """);
     }
 
@@ -2672,14 +2675,13 @@ WHERE [c].[CustomerID] IN (N'ABCDE', N'ALFKI', N'ANATR')
 
         AssertSql(
             """
-@ids='["ABCDE","ALFKI","ANATR"]' (Size = 4000)
+@ids1='ABCDE' (Size = 5) (DbType = StringFixedLength)
+@ids2='ALFKI' (Size = 5) (DbType = StringFixedLength)
+@ids3='ANATR' (Size = 5) (DbType = StringFixedLength)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids) WITH ([value] nchar(5) '$') AS [i]
-)
+WHERE [c].[CustomerID] IN (@ids1, @ids2, @ids3)
 """);
     }
 
@@ -2715,14 +2717,13 @@ WHERE [c].[City] = N'México D.F.' AND [c].[CustomerID] IN (@ids1, @ids2, @ids3)
 
         AssertSql(
             """
-@ids='["ABCDE","ALFKI","ANATR"]' (Size = 4000)
+@ids1='ABCDE' (Size = 5) (DbType = StringFixedLength)
+@ids2='ALFKI' (Size = 5) (DbType = StringFixedLength)
+@ids3='ANATR' (Size = 5) (DbType = StringFixedLength)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] NOT IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids) WITH ([value] nchar(5) '$') AS [i]
-)
+WHERE [c].[CustomerID] NOT IN (@ids1, @ids2, @ids3)
 """);
     }
 
@@ -2744,14 +2745,13 @@ WHERE [c].[CustomerID] NOT IN (N'ABCDE', N'ALFKI', N'ANATR')
 
         AssertSql(
             """
-@ids='["ABCDE","ALFKI","ANATR"]' (Size = 4000)
+@ids1='ABCDE' (Size = 5) (DbType = StringFixedLength)
+@ids2='ALFKI' (Size = 5) (DbType = StringFixedLength)
+@ids3='ANATR' (Size = 5) (DbType = StringFixedLength)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] NOT IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids) WITH ([value] nchar(5) '$') AS [i]
-)
+WHERE [c].[CustomerID] NOT IN (@ids1, @ids2, @ids3)
 """);
     }
 

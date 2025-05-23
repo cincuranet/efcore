@@ -1800,7 +1800,8 @@ WHERE (
 
         AssertSql(
             """
-@ints='[10,111]' (Size = 4000)
+@ints1='10'
+@ints2='111'
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
@@ -1815,8 +1816,8 @@ WHERE (
             OFFSET 1 ROWS
         ) AS [i1]
         UNION
-        SELECT [i0].[value]
-        FROM OPENJSON(@ints) WITH ([value] int '$') AS [i0]
+        SELECT [i0].[Value] AS [value]
+        FROM (VALUES (@ints1), (@ints2)) AS [i0]([Value])
     ) AS [u]) = 3
 """);
     }
