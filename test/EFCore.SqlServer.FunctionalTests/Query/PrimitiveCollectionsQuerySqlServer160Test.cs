@@ -742,14 +742,11 @@ WHERE [p].[DateTime] IN (@dateTimes1, @dateTimes2)
 
         AssertSql(
             """
-@bools='[true]' (Size = 4000)
+@bools1='True'
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE [p].[Bool] IN (
-    SELECT [b].[value]
-    FROM OPENJSON(@bools) WITH ([value] bit '$') AS [b]
-)
+WHERE [p].[Bool] = @bools1
 """);
     }
 
@@ -1137,11 +1134,17 @@ WHERE (
 
         AssertSql(
             """
-@ints='[1,2,3]' (Size = 4000)
+@ints1='1'
+@ints2='2'
+@ints3='3'
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
-WHERE CAST(JSON_VALUE(@ints, '$[' + CAST([p].[Int] AS nvarchar(max)) + ']') AS int) = 1
+WHERE (
+    SELECT [i].[Value]
+    FROM (VALUES (1, @ints1), (2, @ints2), (3, @ints3)) AS [i]([_ord], [Value])
+    ORDER BY [i].[_ord]
+    OFFSET [p].[Int] ROWS FETCH NEXT 1 ROWS ONLY) = 1
 """);
     }
 
@@ -1466,14 +1469,15 @@ ORDER BY [p].[Id]
 
         AssertSql(
             """
-@ints='[11,111]' (Size = 4000)
+@ints1='11'
+@ints2='111'
 
 SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[Enum], [p].[Enums], [p].[Int], [p].[Ints], [p].[NullableInt], [p].[NullableInts], [p].[NullableString], [p].[NullableStrings], [p].[NullableWrappedId], [p].[NullableWrappedIdWithNullableComparer], [p].[String], [p].[Strings], [p].[WrappedId]
 FROM [PrimitiveCollectionsEntity] AS [p]
 WHERE (
     SELECT COUNT(*)
     FROM OPENJSON([p].[Ints]) WITH ([value] int '$') AS [i]
-    INNER JOIN OPENJSON(@ints) WITH ([value] int '$') AS [i0] ON [i].[value] = [i0].[value]) = 2
+    INNER JOIN (VALUES (@ints1), (@ints2)) AS [i0]([Value]) ON [i].[value] = [i0].[Value]) = 2
 """);
     }
 
