@@ -2516,14 +2516,12 @@ WHERE [c].[CustomerID] IN (@customerIds1, @customerIds2, @customerIds3) AND [c].
 
         AssertSql(
             """
-@customerIds='["ALFKI","FISSA"]' (Size = 4000)
+@customerIds1='ALFKI' (Size = 5) (DbType = StringFixedLength)
+@customerIds2='FISSA' (Size = 5) (DbType = StringFixedLength)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] IN (
-    SELECT [c0].[value]
-    FROM OPENJSON(@customerIds) WITH ([value] nchar(5) '$') AS [c0]
-) OR [c].[City] = N'Seattle'
+WHERE [c].[CustomerID] IN (@customerIds1, @customerIds2) OR [c].[City] = N'Seattle'
 """);
     }
 
