@@ -2758,14 +2758,11 @@ WHERE [e].[NullableStringA] IS NOT NULL AND [e].[NullableStringA] <> @ids1
 
         AssertSql(
             """
-@ids='["Foo"]' (Size = 4000)
+@ids1='Foo' (Size = 4000)
 
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[NullableStringA] NOT IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids) WITH ([value] nvarchar(max) '$') AS [i]
-) OR [e].[NullableStringA] IS NULL
+WHERE [e].[NullableStringA] <> @ids1 OR [e].[NullableStringA] IS NULL
 """);
     }
 
@@ -2775,14 +2772,11 @@ WHERE [e].[NullableStringA] NOT IN (
 
         AssertSql(
             """
-@ids_without_nulls='["Foo"]' (Size = 4000)
+@ids2='Foo' (Size = 4000)
 
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[NullableStringA] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids_without_nulls) AS [i]
-) OR [e].[NullableStringA] IS NULL
+WHERE [e].[NullableStringA] IS NULL OR [e].[NullableStringA] = @ids2
 """);
     }
 
@@ -3163,14 +3157,11 @@ WHERE [e].[NullableStringA] IN (
 
         AssertSql(
             """
-@names='[null]' (Size = 4000)
+@names1=NULL (Size = 4000)
 
 SELECT [e].[NullableStringA]
 FROM [Entities1] AS [e]
-WHERE [e].[NullableStringA] IN (
-    SELECT [n].[value]
-    FROM OPENJSON(@names) WITH ([value] nvarchar(max) '$') AS [n]
-)
+WHERE [e].[NullableStringA] = @names1
 """);
     }
 
