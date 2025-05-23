@@ -2381,9 +2381,12 @@ WHERE [c].[CustomerID] IN (N'ALFKI', N'ANATR')
 
         AssertSql(
             """
+@entity_equality_customers_CustomerID1='ALFKI' (Size = 5) (DbType = StringFixedLength)
+@entity_equality_customers_CustomerID2='ANATR' (Size = 5) (DbType = StringFixedLength)
+
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] IN (N'ALFKI', N'ANATR')
+WHERE [c].[CustomerID] IN (@entity_equality_customers_CustomerID1, @entity_equality_customers_CustomerID2)
 """);
     }
 
