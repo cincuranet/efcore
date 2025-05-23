@@ -5450,18 +5450,10 @@ ORDER BY [c].[Name], [g].[Nickname] DESC
 
         AssertSql(
             """
-@nicknames='[]' (Size = 4000)
-
 SELECT [g].[Nickname], [g].[SquadId], [w].[Name], [w].[Id]
 FROM [Gears] AS [g]
 LEFT JOIN [Weapons] AS [w] ON [g].[FullName] = [w].[OwnerFullName]
-ORDER BY CASE
-    WHEN [g].[Nickname] IN (
-        SELECT [n].[value]
-        FROM OPENJSON(@nicknames) WITH ([value] nvarchar(450) '$') AS [n]
-    ) THEN CAST(1 AS bit)
-    ELSE CAST(0 AS bit)
-END DESC, [g].[Nickname], [g].[SquadId]
+ORDER BY [g].[Nickname], [g].[SquadId]
 """);
     }
 
@@ -9167,7 +9159,7 @@ END IN (@numbers1, @numbers2)
 
         AssertSql(
             """
-@weapons='["Marcus\u0027 Lancer","Dom\u0027s Gnasher"]' (Size = 4000)
+@weapons1='Marcus' Lancer' (Size = 4000), @weapons2='Dom's Gnasher' (Size = 4000)
 
 SELECT [g].[Nickname], [g].[SquadId], [g].[AssignedCityName], [g].[CityOfBirthName], [g].[Discriminator], [g].[FullName], [g].[HasSoulPatch], [g].[LeaderNickname], [g].[LeaderSquadId], [g].[Rank]
 FROM [Gears] AS [g]
@@ -9175,10 +9167,7 @@ WHERE (
     SELECT TOP(1) [w0].[Name]
     FROM [Weapons] AS [w0]
     WHERE [g].[FullName] = [w0].[OwnerFullName]
-    ORDER BY [w0].[Id]) IN (
-    SELECT [w].[value]
-    FROM OPENJSON(@weapons) WITH ([value] nvarchar(max) '$') AS [w]
-)
+    ORDER BY [w0].[Id]) IN (@weapons1, @weapons2)
 """);
     }
 

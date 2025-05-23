@@ -5571,14 +5571,11 @@ WHERE [g].[HasSoulPatch] = CAST(1 AS bit)
             """
 @start='1902-01-01T10:00:00.1234567+01:30'
 @end='1902-01-03T10:00:00.1234567+01:30'
-@dates='["1902-01-02T10:00:00.1234567+01:30"]' (Size = 4000)
+@dates1='1902-01-02T10:00:00.1234567+01:30'
 
 SELECT [m].[Id], [m].[BriefingDocument], [m].[BriefingDocumentFileExtension], [m].[CodeName], [m].[Date], [m].[Difficulty], [m].[Duration], [m].[PeriodEnd], [m].[PeriodStart], [m].[Rating], [m].[Time], [m].[Timeline]
 FROM [Missions] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [m]
-WHERE @start <= CAST(CONVERT(date, [m].[Timeline]) AS datetimeoffset) AND [m].[Timeline] < @end AND [m].[Timeline] IN (
-    SELECT [d].[value]
-    FROM OPENJSON(@dates) WITH ([value] datetimeoffset '$') AS [d]
-)
+WHERE @start <= CAST(CONVERT(date, [m].[Timeline]) AS datetimeoffset) AND [m].[Timeline] < @end AND [m].[Timeline] = @dates1
 """);
     }
 
@@ -7158,18 +7155,10 @@ WHERE [c].[Location] LIKE '%Jacinto%'
 
         AssertSql(
             """
-@nicknames='[]' (Size = 4000)
-
 SELECT [g].[Nickname], [g].[SquadId], [w].[Name], [w].[Id]
 FROM [Gears] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [g]
 LEFT JOIN [Weapons] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [w] ON [g].[FullName] = [w].[OwnerFullName]
-ORDER BY CASE
-    WHEN [g].[Nickname] IN (
-        SELECT [n].[value]
-        FROM OPENJSON(@nicknames) WITH ([value] nvarchar(450) '$') AS [n]
-    ) THEN CAST(1 AS bit)
-    ELSE CAST(0 AS bit)
-END DESC, [g].[Nickname], [g].[SquadId]
+ORDER BY [g].[Nickname], [g].[SquadId]
 """);
     }
 
@@ -9089,7 +9078,9 @@ WHERE (
 
         AssertSql(
             """
-@numbers='[0,1,2]' (Size = 4000)
+@numbers1='0'
+@numbers2='1'
+@numbers3='2'
 
 SELECT [g].[Nickname], [g].[SquadId], [w1].[Id], [w1].[AmmunitionType], [w1].[IsAutomatic], [w1].[Name], [w1].[OwnerFullName], [w1].[PeriodEnd], [w1].[PeriodStart], [w1].[SynergyWithId]
 FROM [Gears] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [g]
@@ -9100,9 +9091,9 @@ LEFT JOIN (
         FROM [Weapons] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [w]
     ) AS [w0]
     WHERE [w0].[row] <= ISNULL((
-        SELECT [n].[value]
-        FROM OPENJSON(@numbers) WITH ([value] int '$') AS [n]
-        ORDER BY [n].[value]
+        SELECT [n].[Value]
+        FROM (VALUES (1, @numbers1), (2, @numbers2), (3, @numbers3)) AS [n]([_ord], [Value])
+        ORDER BY [n].[Value]
         OFFSET 1 ROWS FETCH NEXT 1 ROWS ONLY), 0)
 ) AS [w1] ON [g].[FullName] = [w1].[OwnerFullName]
 ORDER BY [g].[Nickname], [g].[SquadId], [w1].[OwnerFullName], [w1].[Id]
@@ -9265,41 +9256,31 @@ LEFT JOIN [LocustHighCommands] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.000000
 
         AssertSql(
             """
-@ranks='[1]' (Size = 4000)
+@ranks1='1'
 @key='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
-@keys='["0a47bcb7-a1cb-4345-8944-c58f82d6aac7","5f221fb9-66f4-442a-92c9-d97ed5989cc7"]' (Size = 4000)
+@keys1='0a47bcb7-a1cb-4345-8944-c58f82d6aac7'
+@keys2='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
 
 SELECT [g].[Nickname], [g].[SquadId], [g].[AssignedCityName], [g].[CityOfBirthName], [g].[Discriminator], [g].[FullName], [g].[HasSoulPatch], [g].[LeaderNickname], [g].[LeaderSquadId], [g].[PeriodEnd], [g].[PeriodStart], [g].[Rank]
 FROM [Gears] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [g]
 WHERE CASE
-    WHEN [g].[Rank] IN (
-        SELECT [r].[value]
-        FROM OPENJSON(@ranks) WITH ([value] int '$') AS [r]
-    ) THEN @key
+    WHEN [g].[Rank] = @ranks1 THEN @key
     ELSE @key
-END IN (
-    SELECT [k].[value]
-    FROM OPENJSON(@keys) WITH ([value] uniqueidentifier '$') AS [k]
-)
+END IN (@keys1, @keys2)
 """,
             //
             """
-@ammoTypes='[1]' (Size = 4000)
+@ammoTypes1='1'
 @key='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
-@keys='["0a47bcb7-a1cb-4345-8944-c58f82d6aac7","5f221fb9-66f4-442a-92c9-d97ed5989cc7"]' (Size = 4000)
+@keys1='0a47bcb7-a1cb-4345-8944-c58f82d6aac7'
+@keys2='5f221fb9-66f4-442a-92c9-d97ed5989cc7'
 
 SELECT [w].[Id], [w].[AmmunitionType], [w].[IsAutomatic], [w].[Name], [w].[OwnerFullName], [w].[PeriodEnd], [w].[PeriodStart], [w].[SynergyWithId]
 FROM [Weapons] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [w]
 WHERE CASE
-    WHEN [w].[AmmunitionType] IN (
-        SELECT [a].[value]
-        FROM OPENJSON(@ammoTypes) WITH ([value] int '$') AS [a]
-    ) THEN @key
+    WHEN [w].[AmmunitionType] = @ammoTypes1 THEN @key
     ELSE @key
-END IN (
-    SELECT [k].[value]
-    FROM OPENJSON(@keys) WITH ([value] uniqueidentifier '$') AS [k]
-)
+END IN (@keys1, @keys2)
 """);
     }
 

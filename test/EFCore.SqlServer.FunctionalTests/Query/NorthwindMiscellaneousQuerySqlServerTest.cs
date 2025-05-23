@@ -5403,9 +5403,11 @@ WHERE [c].[CustomerID] = @entity_equality_a_CustomerID
 
         AssertSql(
             """
+@entity_equality_customers_CustomerID1='ALFKI' (Size = 5) (DbType = StringFixedLength)
+
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] = N'ALFKI'
+WHERE [c].[CustomerID] = @entity_equality_customers_CustomerID1
 """);
     }
 
@@ -7057,14 +7059,13 @@ WHERE [c].[CustomerID] + [c].[CompanyName] IN (@data1, @data2)
 
         AssertSql(
             """
-@data='["ALFKISomeConstant","ANATRSomeConstant","ALFKIX"]' (Size = 4000)
+@data1='ALFKISomeConstant' (Size = 4000)
+@data2='ANATRSomeConstant' (Size = 4000)
+@data3='ALFKIX' (Size = 4000)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] + N'SomeConstant' IN (
-    SELECT [d].[value]
-    FROM OPENJSON(@data) WITH ([value] nvarchar(max) '$') AS [d]
-)
+WHERE [c].[CustomerID] + N'SomeConstant' IN (@data1, @data2, @data3)
 """);
     }
 
