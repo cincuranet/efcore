@@ -3077,14 +3077,12 @@ END
 
         AssertSql(
             """
-@list='["Foo","Bar"]' (Size = 4000)
+@list1='Foo' (Size = 4000)
+@list2='Bar' (Size = 4000)
 
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[StringA] IN (
-    SELECT [l].[value]
-    FROM OPENJSON(@list) WITH ([value] nvarchar(max) '$') AS [l]
-)
+WHERE [e].[StringA] IN (@list1, @list2)
 """,
             //
             """
@@ -3140,14 +3138,9 @@ WHERE [e].[NullableStringA] IN (
 
         AssertSql(
             """
-@names='[]' (Size = 4000)
-
 SELECT [e].[NullableStringA]
 FROM [Entities1] AS [e]
-WHERE [e].[NullableStringA] IN (
-    SELECT [n].[value]
-    FROM OPENJSON(@names) WITH ([value] nvarchar(max) '$') AS [n]
-)
+WHERE 0 = 1
 """);
     }
 
@@ -3628,47 +3621,39 @@ END = COALESCE([e0].[NullableBoolA], [e0].[BoolC])
 
         AssertSql(
             """
-@ids='[1,2]' (Size = 4000)
+@ids1='1'
+@ids2='2'
 
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[NullableIntA] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids) WITH ([value] int '$') AS [i]
-)
+WHERE [e].[NullableIntA] IN (@ids1, @ids2)
 """,
             //
             """
-@ids='[1,2]' (Size = 4000)
+@ids1='1'
+@ids2='2'
 
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[NullableIntA] NOT IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids) WITH ([value] int '$') AS [i]
-) OR [e].[NullableIntA] IS NULL
+WHERE [e].[NullableIntA] NOT IN (@ids1, @ids2) OR [e].[NullableIntA] IS NULL
 """,
             //
             """
-@ids2_without_nulls='[1,2]' (Size = 4000)
+@ids21='1'
+@ids22='2'
 
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[NullableIntA] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids2_without_nulls) AS [i]
-) OR [e].[NullableIntA] IS NULL
+WHERE [e].[NullableIntA] IN (@ids21, @ids22) OR [e].[NullableIntA] IS NULL
 """,
             //
             """
-@ids2_without_nulls='[1,2]' (Size = 4000)
+@ids21='1'
+@ids22='2'
 
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[NullableIntA] NOT IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids2_without_nulls) AS [i]
-) AND [e].[NullableIntA] IS NOT NULL
+WHERE [e].[NullableIntA] NOT IN (@ids21, @ids22) AND [e].[NullableIntA] IS NOT NULL
 """,
             //
             """
@@ -3702,47 +3687,26 @@ WHERE [e].[NullableIntA] NOT IN (1, 2) AND [e].[NullableIntA] IS NOT NULL
 
         AssertSql(
             """
-@ids='[]' (Size = 4000)
-
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[NullableIntA] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids) WITH ([value] int '$') AS [i]
-)
+WHERE 0 = 1
 """,
             //
             """
-@ids='[]' (Size = 4000)
-
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[NullableIntA] NOT IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids) WITH ([value] int '$') AS [i]
-) OR [e].[NullableIntA] IS NULL
 """,
             //
             """
-@ids2_without_nulls='[]' (Size = 4000)
-
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[NullableIntA] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids2_without_nulls) AS [i]
-) OR [e].[NullableIntA] IS NULL
+WHERE [e].[NullableIntA] IS NULL
 """,
             //
             """
-@ids2_without_nulls='[]' (Size = 4000)
-
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[NullableIntA] NOT IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids2_without_nulls) AS [i]
-) AND [e].[NullableIntA] IS NOT NULL
+WHERE [e].[NullableIntA] IS NOT NULL
 """,
             //
             """
@@ -4105,91 +4069,61 @@ WHERE [e].[IntA] NOT IN (1, 2)
 
         AssertSql(
             """
-@ids='[1,2,null]' (Size = 4000)
+@ids1='1'
+@ids2='2'
 
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[IntA] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids) WITH ([value] int '$') AS [i]
-)
+WHERE [e].[IntA] IN (@ids1, @ids2)
 """,
             //
             """
-@ids_without_nulls='[1,2]' (Size = 4000)
+@ids1='1'
+@ids2='2'
 
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[IntA] NOT IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids_without_nulls) AS [i]
-)
+WHERE [e].[IntA] NOT IN (@ids1, @ids2)
 """,
             //
             """
-@ids2='[1,2]' (Size = 4000)
+@ids21='1'
+@ids22='2'
 
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[IntA] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids2) WITH ([value] int '$') AS [i]
-)
+WHERE [e].[IntA] IN (@ids21, @ids22)
 """,
             //
             """
-@ids2='[1,2]' (Size = 4000)
+@ids21='1'
+@ids22='2'
 
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[IntA] NOT IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids2) WITH ([value] int '$') AS [i]
-)
+WHERE [e].[IntA] NOT IN (@ids21, @ids22)
 """,
             //
             """
-@ids3='[]' (Size = 4000)
-
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[IntA] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids3) WITH ([value] int '$') AS [i]
-)
+WHERE 0 = 1
 """,
             //
             """
-@ids3='[]' (Size = 4000)
-
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[IntA] NOT IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids3) WITH ([value] int '$') AS [i]
-)
 """,
             //
             """
-@ids4='[null]' (Size = 4000)
-
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[IntA] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids4) WITH ([value] int '$') AS [i]
-)
+WHERE 0 = 1
 """,
             //
             """
-@ids4_without_nulls='[]' (Size = 4000)
-
 SELECT [e].[Id]
 FROM [Entities1] AS [e]
-WHERE [e].[IntA] NOT IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids4_without_nulls) AS [i]
-)
 """);
     }
 
