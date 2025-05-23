@@ -2128,7 +2128,6 @@ WHERE [c].[CustomerID] NOT IN (N'ALFKI', N'ANATR', N'ANTON')
     {
         await base.Multiple_AndAlso_on_same_column_converted_to_in_using_parameters(async);
 
-        // issue #21462
         AssertSql(
             """
 @prm1='ALFKI' (Size = 5) (DbType = StringFixedLength)
@@ -2145,7 +2144,6 @@ WHERE [c].[CustomerID] <> @prm1 AND [c].[CustomerID] <> @prm2 AND [c].[CustomerI
     {
         await base.Array_of_parameters_Contains_OrElse_comparison_with_constant_gets_combined_to_one_in(async);
 
-        // issue #21462
         AssertSql(
             """
 @prm1='ALFKI' (Size = 5) (DbType = StringFixedLength)
@@ -2161,7 +2159,6 @@ WHERE [c].[CustomerID] IN (@prm1, @prm2, N'ANTON')
     {
         await base.Multiple_OrElse_on_same_column_with_null_parameter_comparison_converted_to_in(async);
 
-        // issue #21462
         AssertSql(
             """
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
