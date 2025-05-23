@@ -3121,14 +3121,12 @@ WHERE [e].[NullableBoolA] = [e].[NullableBoolB]
 
         AssertSql(
             """
-@names='["Foo","Bar"]' (Size = 4000)
+@names1='Foo' (Size = 4000)
+@names2='Bar' (Size = 4000)
 
 SELECT [e].[NullableStringA]
 FROM [Entities1] AS [e]
-WHERE [e].[NullableStringA] IN (
-    SELECT [n].[value]
-    FROM OPENJSON(@names) WITH ([value] nvarchar(max) '$') AS [n]
-)
+WHERE [e].[NullableStringA] IN (@names1, @names2)
 """);
     }
 

@@ -3032,16 +3032,14 @@ WHERE [c].[City] IN (@cities1, @cities2)
 
         AssertSql(
             """
-@cities='["London","Berlin"]' (Size = 4000)
+@cities1='London' (Size = 15)
+@cities2='Berlin' (Size = 15)
 
 SELECT MAX([s].[value])
 FROM [Customers] AS [c]
 OUTER APPLY (
     SELECT CASE
-        WHEN [c].[City] IN (
-            SELECT [c0].[value]
-            FROM OPENJSON(@cities) WITH ([value] nvarchar(15) '$') AS [c0]
-        ) THEN 1
+        WHEN [c].[City] IN (@cities1, @cities2) THEN 1
         ELSE 0
     END AS [value]
 ) AS [s]
