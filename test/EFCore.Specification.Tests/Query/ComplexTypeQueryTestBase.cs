@@ -14,6 +14,13 @@ public abstract class ComplexTypeQueryTestBase<TFixture> : QueryTestBase<TFixtur
 
     [ConditionalTheory]
     [MemberData(nameof(IsAsyncData))]
+    public virtual Task Filter_on_property_inside_optional_complex_type(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<Customer>().Where(c => c.OptionalShippingAddress!.ZipCode == 07728));
+
+    [ConditionalTheory]
+    [MemberData(nameof(IsAsyncData))]
     public virtual Task Filter_on_property_inside_complex_type(bool async)
         => AssertQuery(
             async,

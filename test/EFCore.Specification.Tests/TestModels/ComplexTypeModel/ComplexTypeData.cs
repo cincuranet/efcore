@@ -59,7 +59,8 @@ public class ComplexTypeData : ISetSource
             Id = 1,
             Name = "Mona Cy",
             ShippingAddress = address1,
-            BillingAddress = address1
+            BillingAddress = address1,
+            OptionalShippingAddress = null,
         };
 
         var customer2 = new Customer
@@ -79,7 +80,8 @@ public class ComplexTypeData : ISetSource
                 ZipCode = 29293,
                 Country = new Country { FullName = "Germany", Code = "DE" },
                 Tags = ["a1", "a2", "a3"]
-            }
+            },
+            OptionalShippingAddress = null,
         };
 
         var address3 = new Address
@@ -95,7 +97,8 @@ public class ComplexTypeData : ISetSource
             Id = 3,
             Name = "Monty Elias",
             ShippingAddress = address3,
-            BillingAddress = address3
+            BillingAddress = address3,
+            OptionalShippingAddress = null,
         };
 
         return [customer1, customer2, customer3];
